@@ -3,6 +3,7 @@ package currency.converter;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class CurrencyHandler {
     private boolean isAdmin;
@@ -48,6 +49,17 @@ public class CurrencyHandler {
     }
 
     public Boolean addCurrency(String currency) {
+        this.DBM.add(currency); //add new currency to the json
 
+        return Boolean.TRUE;
+    }
+
+    public Map<String, Float> collateHistoryResults(Map<String, Float> currency, float amount) {
+
+        //get list of rates from map
+        List<Float> listOfRates = new ArrayList<>(currency.values());
+
+        //might need to do prints here
+        return currCalc.calculateStatistic(listOfRates);
     }
 }
