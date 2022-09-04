@@ -1,5 +1,49 @@
 package currency.converter;
 
-public class CurrencyHandler {
+import java.util.List;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
+public class CurrencyHandler {
+    private boolean isAdmin;
+    private CurrencyCalculator currCalc;
+    private DatabaseManager DBM;
+
+    public CurrencyHandler(boolean admin) {
+        this.isAdmin = admin;
+        this.currCalc = new CurrencyCalculator();
+        this.DBM = new DatabaseManager();
+    }
+
+    public float convertCurrency(float amount, String currCurrency, String newCurrency) {
+        float rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
+
+        return rate * amount;
+    }
+
+    public String[][] displayPopular() {
+        ArrayList<String> popularCurrencies = DBM.getPopularCurrencies();
+        String[][] display = new String[4][4];
+
+        for (int i = 0; i < popularCurrencies.size(); i++) {
+            String fromCurrency = popularCurrencies.get(i);
+            for (int j = 0; j < popularCurrencies.size() j++) {
+                String toCurrency = popularCurrencies.get(j);
+                if (i == j) {
+                    display[i][j] = "-";
+                }
+                else {
+                    float conversion = DBM.getConversion(fromCurrency, toCurrency);
+                    boolean upDirection = DBM.checkDirection(fromCurrency, toCurrency);
+                    if (upDirection) {
+                        String data = String.format("{0} (↑)", conversion);
+                    } else {
+                        String data = String.format("{0} (↓)", conversion);
+                    }
+                }
+            }
+        }
+
+        return display;
+    }
 }
