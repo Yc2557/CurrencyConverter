@@ -3,11 +3,13 @@
  */
 package currency.converter;
 
+import java.util.Scanner;
+
 public class App {
     public static void main(String[] args) {
         // Check admin
 
         // Input Loop from user
-        Scanner sc = new Scanner(system.in);
+        Scanner sc = new Scanner(System.in);
     }
 }

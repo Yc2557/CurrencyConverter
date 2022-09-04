@@ -24,6 +24,10 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.1.1-jre'
+
+    // JSON dependency
+    implementation 'org.json:json:20171018'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }
 
 application {
@@ -36,12 +40,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-jacocoTestReport { 
-    reports { 
-        html.enabled = true 
-        csv.enabled = true 
+jacocoTestReport {
+    reports {
+        html.enabled = true
+        csv.enabled = true
     }
-}  
+}
 
 test {
     useJUnitPlatform()
