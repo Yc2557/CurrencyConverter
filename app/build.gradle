@@ -47,3 +47,7 @@ test {
     useJUnitPlatform()
     test.finalizedBy jacocoTestReport // <- add this line
 }
+
+run{
+    standardInput = System.in
+}

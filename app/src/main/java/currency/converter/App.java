@@ -16,7 +16,10 @@ public class App {
 
         String input = "";
 
-        while (sc.hasNextLine()) {
+        Boolean exitFlag = false;
+
+        do {
+            System.out.println("Please input your command: ");
             input = sc.nextLine();
 
             // Break up input
@@ -26,12 +29,15 @@ public class App {
             switch (command) {
                 case "convert":
                     System.out.println("Prints");
+                    break;
                 case "exit":
                     System.out.println("Have a good day!");
-                    sc.close();
+                    exitFlag = true;
                     break;
+                default:
+                    System.out.println("The command you've entered is invalid.")
             }
 
-        }
+        } while (!exitFlag);
     }
 }
