@@ -27,7 +27,7 @@ public class CurrencyHandler {
 
         for (int i = 0; i < popularCurrencies.size(); i++) {
             String fromCurrency = popularCurrencies.get(i);
-            for (int j = 0; j < popularCurrencies.size() j++) {
+            for (int j = 0; j < popularCurrencies.size(); j++) {
                 String toCurrency = popularCurrencies.get(j);
                 if (i == j) {
                     display[i][j] = "-";
@@ -45,5 +45,9 @@ public class CurrencyHandler {
         }
 
         return display;
+    }
+
+    public Boolean addCurrency(String currency) {
+
     }
 }
