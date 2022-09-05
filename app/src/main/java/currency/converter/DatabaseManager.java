@@ -2,6 +2,8 @@ package currency.converter;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,17 +30,21 @@ public class DatabaseManager {
             JSONObject database = (JSONObject) jsonParser.parse(new
                     FileReader("database.json"));
 
-            // Extracting the rates object from the database
-            JSONObject rates = (JSONObject) database.get("rates");
+            // Extracting the rates array from the database
+            JSONArray rates = (JSONArray) database.get("rates");
+
+            // Extracting the specific currency objects from the database
+            JSONObject curr1Object = (JSONObject) rates.get(getRateIndex(curr1, rates));
+            JSONObject curr2Object = (JSONObject) rates.get(getRateIndex(curr2, rates));
 
             // Extracting the arrays for the respective currencies
             // which contain all the historical & present rates
-            JSONArray arrayCurr1 = (JSONArray) rates.get(curr1);
-            JSONArray arrayCurr2 = (JSONArray) rates.get(curr2);
+            JSONArray curr1Data = (JSONArray) curr1Object.get("data");
+            JSONArray curr2Data = (JSONArray) curr2Object.get("data");
 
             // Extracting the most recent exchange rates of the two currencies
-            JSONObject curr1Obj = (JSONObject) arrayCurr1.get(arrayCurr1.size()-1);
-            JSONObject curr2Obj = (JSONObject) arrayCurr2.get(arrayCurr2.size()-1);
+            JSONObject curr1Obj = (JSONObject) curr1Data.get(curr1Data.size()-1);
+            JSONObject curr2Obj = (JSONObject) curr2Data.get(curr2Data.size()-1);
 
             // Extracting the most recent rates for each of the currencies
             float rate1 = (float) curr1Obj.get("rate");
@@ -79,8 +85,10 @@ public class DatabaseManager {
             JSONObject database = (JSONObject) jsonParser.parse(new
                     FileReader("database.json"));
 
-            JSONObject rates = (JSONObject) database.get("rates");
-            JSONArray currArray = (JSONArray) rates.get(curr);
+            JSONArray rates = (JSONArray) database.get("rates");
+            JSONObject currObject = (JSONObject) rates.get(getRateIndex(curr, rates));
+            JSONArray currArray = (JSONArray) currObject.get("data");
+
             // Checking if there is at least one other timestamp to compare with
             if (currArray.size() < 2) {
                 return false;
@@ -104,5 +112,26 @@ public class DatabaseManager {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String checkDate(String curr1, String curr2) {
+        return null;
+    }
+
+    public HashMap<String, Float> getConversionHistory(String curr1,
+                                                       String curr2,
+                                                       String startDate,
+                                                       String endDate){
+        return null;
+    }
+
+    // Helper function to find the index of a rate object in the array
+    public static int getRateIndex(String curr, JSONArray array) {
+        for (int i=0; i<array.size(); i++) {
+            if (curr.equals(array.get(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
