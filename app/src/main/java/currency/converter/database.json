@@ -1,38 +1,23 @@
-
-//rasim says use GSON
-
 {
-  "MAIN" : "AUD"
-
-  "TO" : "USD" : [{
-  "RATE":"10",
-  "DATE":"09/10/22"
-}, {
-  "RATE":"9.8",
-  "DATE":"10/10/22"
-}, {
-  "":""
-}]
-"TO" : "NZD" : [
-{
-
+  "base": "AUD",
+  "rates": {
+    "USD": [
+      {
+        "date": "01-09-2022",
+        "rate": 0.677
+      }
+    ],
+    "EUR": [
+      {
+        "date": "01-09-2022",
+        "rate": 0.681
+      }
+    ],
+    "SGD": [
+      {
+        "date": "01-09-2022",
+        "rate": 0.950
+      }
+    ]
+  }
 }
-]
-}
-
-{
-
-String main
-
-String to [ (float rate, String date),(rate,date) ]
-String to [ (rate,date),(rate,date) ]
-
-
-}
-
-cur1, cur2, startdate, enddate
-find cur1
-find cur2
-if date[i] > startdate:
-return
-
