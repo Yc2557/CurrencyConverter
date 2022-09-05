@@ -46,4 +46,12 @@ public class CurrencyHandler {
 
         return display;
     }
+
+    public void updateCurrency(String curr1, String curr2, float newRate, LocalDate date) {
+        LocalDate recentDate = DBM.checkDate(curr1, curr2);
+        if (!recentDate.equals(date)) {
+            //can convert date to a string if needed, left as LocalDate
+            DBM.addRate(curr1, curr2, newRate, date);
+        }
+    }
 }
