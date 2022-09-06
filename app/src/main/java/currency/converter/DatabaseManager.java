@@ -73,6 +73,33 @@ public class DatabaseManager {
 
     public void addRate(String curr1, String curr2, float amount, String date) {
 
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject database = (JSONObject) jsonParser.parse(new
+                    FileReader("database.json"));
+
+            //Get the rates array, relevant currency array
+            JSONArray rates = (JSONArray) database.get("rates");
+            JSONObject currObject = (JSONObject) rates.get(getRateIndex(curr1, rates));
+
+            //Get the date:rate array from that currency
+            JSONArray currArray = (JSONArray) currObject.get("data");
+
+            //Create a new currency obj, populate it
+            JSONObject newCur = (JSONObject) new JSONObject();
+            newCur.put("date", date);
+            newCur.put("rate", amount);
+
+            currArray.put(newCur);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found!");
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<String> getPopularCurrencies() {
