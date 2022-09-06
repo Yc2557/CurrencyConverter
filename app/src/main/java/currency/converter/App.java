@@ -11,7 +11,7 @@ public class App {
         // Check admin
 
         // Input Loop from user
-        CurrencyHandler handler = new CurrencyHandler();
+        CurrencyHandler handler = new CurrencyHandler(true);
         Scanner sc = new Scanner(System.in);
 
         String input = "";
@@ -35,9 +35,11 @@ public class App {
                     exitFlag = true;
                     break;
                 default:
-                    System.out.println("The command you've entered is invalid.")
+                    System.out.println("The command you've entered is invalid.");
             }
 
         } while (!exitFlag);
+
+        Scanner s = new Scanner(System.in);
     }
 }
