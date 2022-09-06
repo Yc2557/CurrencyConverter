@@ -23,7 +23,7 @@ public class DatabaseManager {
         this.isAdmin = isAdmin;
     }
 
-    public float getRate(String curr1, String curr2) {
+    public float getConversion(String curr1, String curr2) {
         try {
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
@@ -34,8 +34,8 @@ public class DatabaseManager {
             JSONArray rates = (JSONArray) database.get("rates");
 
             // Extracting the specific currency objects from the database
-            JSONObject curr1Object = (JSONObject) rates.get(getRateIndex(curr1, rates));
-            JSONObject curr2Object = (JSONObject) rates.get(getRateIndex(curr2, rates));
+            JSONObject curr1Object = (JSONObject) rates.get(getConversionIndex(curr1, rates));
+            JSONObject curr2Object = (JSONObject) rates.get(getConversionIndex(curr2, rates));
 
             // Extracting the arrays for the respective currencies
             // which contain all the historical & present rates
@@ -71,7 +71,7 @@ public class DatabaseManager {
         return 0.000F;
     }
 
-    public void addRate(String curr1, String curr2, float amount, String date) {
+    public void addConversion(String curr1, String curr2, float amount, String date) {
 
         try {
             JSONParser jsonParser = new JSONParser();
@@ -80,7 +80,7 @@ public class DatabaseManager {
 
             //Get the rates array, relevant currency array
             JSONArray rates = (JSONArray) database.get("rates");
-            JSONObject currObject = (JSONObject) rates.get(getRateIndex(curr1, rates));
+            JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr1, rates));
 
             //Get the date:rate array from that currency
             JSONArray currArray = (JSONArray) currObject.get("data");
@@ -90,7 +90,7 @@ public class DatabaseManager {
             newCur.put("date", date);
             newCur.put("rate", amount);
 
-            currArray.put(newCur);
+            currArray.add(newCur);
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -106,14 +106,14 @@ public class DatabaseManager {
         return null;
     }
 
-    public boolean rateIncreased(String curr) {
+    public boolean conversionIncreased(String curr) {
         try {
             JSONParser jsonParser = new JSONParser();
             JSONObject database = (JSONObject) jsonParser.parse(new
                     FileReader("database.json"));
 
             JSONArray rates = (JSONArray) database.get("rates");
-            JSONObject currObject = (JSONObject) rates.get(getRateIndex(curr, rates));
+            JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr, rates));
             JSONArray currArray = (JSONArray) currObject.get("data");
 
             // Checking if there is at least one other timestamp to compare with
@@ -153,7 +153,7 @@ public class DatabaseManager {
     }
 
     // Helper function to find the index of a rate object in the array
-    public static int getRateIndex(String curr, JSONArray array) {
+    public static int getConversionIndex(String curr, JSONArray array) {
         for (int i=0; i<array.size(); i++) {
             if (curr.equals(array.get(i))) {
                 return i;
