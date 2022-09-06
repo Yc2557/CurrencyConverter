@@ -3,6 +3,8 @@ package currency.converter;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.HashMap;
 
 public class CurrencyHandler {
     private boolean isAdmin;
@@ -12,11 +14,11 @@ public class CurrencyHandler {
     public CurrencyHandler(boolean admin) {
         this.isAdmin = admin;
         this.currCalc = new CurrencyCalculator();
-        this.DBM = new DatabaseManager();
+        this.DBM = new DatabaseManager(admin);
     }
 
     public float convertCurrency(float amount, String currCurrency, String newCurrency) {
-        float rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
+        float rate = DBM.getRate(currCurrency, newCurrency); // Need to test whether the rate is as expected
 
         return rate * amount;
     }
@@ -27,7 +29,7 @@ public class CurrencyHandler {
 
         for (int i = 0; i < popularCurrencies.size(); i++) {
             String fromCurrency = popularCurrencies.get(i);
-            for (int j = 0; j < popularCurrencies.size() j++) {
+            for (int j = 0; j < popularCurrencies.size(); j++) {
                 String toCurrency = popularCurrencies.get(j);
                 if (i == j) {
                     display[i][j] = "-";
