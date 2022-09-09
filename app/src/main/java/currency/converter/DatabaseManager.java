@@ -102,8 +102,13 @@ public class DatabaseManager {
         }
     }
 
+    // MICHAEL
     public List<String> getPopularCurrencies() {
         return null;
+        /*
+        Will be set by the admin (create new method)
+
+         */
     }
 
     public boolean conversionIncreased(String curr) {
@@ -141,8 +146,27 @@ public class DatabaseManager {
         }
     }
 
-    public String checkDate(String curr1, String curr2) {
-        return "JENKINS";
+    // Returns the most recent date which the passed currency was updated
+    public String checkDate(String curr) {
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject database = (JSONObject) jsonParser.parse(new
+                    FileReader("database.json"));
+
+            JSONArray rates = (JSONArray) database.get("rates");
+            JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr, rates));
+            JSONArray currArray = (JSONArray) currObject.get("data");
+            JSONObject currPresentRate = (JSONObject) currArray.get(currArray.size()-1);
+
+            return (String) currPresentRate.get("date");
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public HashMap<String, Float> getConversionHistory(String curr1,
