@@ -3,8 +3,11 @@ package currency.converter;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
 import java.util.Map.Entry;
 import java.util.HashMap;
+import java.util.Map;
+
 
 public class CurrencyHandler {
     private boolean isAdmin;
@@ -49,11 +52,27 @@ public class CurrencyHandler {
         return display;
     }
 
+    public Boolean addCurrency(String currency) {
+        this.DBM.add(currency); //add new currency to the json
+
+        return Boolean.TRUE;
+    }
+
+    public Map<String, Float> collateHistoryResults(Map<String, Float> currency, float amount) {
+
+        //get list of rates from map
+        List<Float> listOfRates = new ArrayList<>(currency.values());
+
+        //might need to do prints here
+        return currCalc.calculateStatistic(listOfRates);
+    }
     public void updateCurrency(String curr1, String curr2, float newRate, LocalDate date) {
         LocalDate recentDate = DBM.checkDate(curr1, curr2);
         if (!recentDate.equals(date)) {
             //can convert date to a string if needed, left as LocalDate
-            DBM.addRate(curr1, curr2, newRate, date);
+            DBM.addRate(curr1, curr2, newRate, date);  
+        }
+    }
 
     public void printConversionHistory(String curr1, String curr2, String startDate, String endDate) {
         HashMap<String, Float> conversionRates = DBM.getConversionHistory(curr1, curr2, startDate, endDate);
