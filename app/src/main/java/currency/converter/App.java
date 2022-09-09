@@ -3,43 +3,28 @@
  */
 package currency.converter;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Scanner;
+import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
 
-public class App {
+public class App extends Application{
+
+    @Override
+    public void start(Stage primaryStage) throws IOException {
+
+        Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
+        primaryStage.setTitle("Currency Converter");
+        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.show();
+    }
+
     public static void main(String[] args) {
-        // Check admin
-
-        // Input Loop from user
-        CurrencyHandler handler = new CurrencyHandler(true);
-        Scanner sc = new Scanner(System.in);
-
-        String input = "";
-
-        Boolean exitFlag = false;
-
-        do {
-            System.out.println("Please input your command: ");
-            input = sc.nextLine();
-
-            // Break up input
-            String[] input_list = input.split(" ");
-            String command = input_list[0];
-
-            switch (command) {
-                case "convert":
-                    System.out.println("Prints");
-                    break;
-                case "exit":
-                    System.out.println("Have a good day!");
-                    exitFlag = true;
-                    break;
-                default:
-                    System.out.println("The command you've entered is invalid.");
-            }
-
-        } while (!exitFlag);
-
-        Scanner s = new Scanner(System.in);
+        launch(args);
     }
 }

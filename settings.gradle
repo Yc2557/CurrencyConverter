@@ -9,3 +9,6 @@
 
 rootProject.name = 'currency-converter'
 include('app')
+include 'app:src:main:resources'
+findProject(':app:src:main:resources')?.name = 'resources'
+

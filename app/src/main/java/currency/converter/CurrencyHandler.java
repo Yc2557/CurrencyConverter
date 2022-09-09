@@ -1,5 +1,6 @@
 package currency.converter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class CurrencyHandler {
     public CurrencyHandler(boolean admin) {
         this.isAdmin = admin;
         this.currCalc = new CurrencyCalculator();
-        this.DBM = new DatabaseManager();
+        this.DBM = new DatabaseManager(true);
     }
 
     public float convertCurrency(float amount, String currCurrency, String newCurrency) {
@@ -75,12 +76,12 @@ public class CurrencyHandler {
         HashMap<String, Float> statMap = currCalc.calculateStatistic(DBM.getPastConversion());
 
         System.out.println("Conversion Rate History of " + curr1 + " to " + curr2);
-        for (Entry <String,Float> entry : conversionRates) {
+        for (Map.Entry<String,Float> entry : conversionRates) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
 
         System.out.println("Statistics");
-        for (Entry<String,Float> entry : statMap) {
+        for (Map.Entry<String,Float> entry : statMap) {
             System.out.println(entry.getKey() + ": " +  entry.getValue());
         }
     }
