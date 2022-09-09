@@ -9,8 +9,7 @@ import java.time.LocalDate;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.List;
+import java.io.FileNotFoundException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -64,7 +63,7 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -99,7 +98,7 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -137,7 +136,7 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
