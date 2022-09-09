@@ -8,12 +8,15 @@ import java.time.LocalDate;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
-import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
+
+import org.json.simple.JSONObject;
 
 public class DatabaseManager {
 
