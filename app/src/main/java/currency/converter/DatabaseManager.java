@@ -11,7 +11,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
+import org.json.simple.JSONObject;
+
 public class DatabaseManager {
+
 
     private boolean isAdmin;
     // private JSONParser jsonParser; <-- maybe?
