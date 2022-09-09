@@ -142,7 +142,7 @@ public class DatabaseManager {
     }
 
     public String checkDate(String curr1, String curr2) {
-        return null;
+        return "JENKINS";
     }
 
     public HashMap<String, Float> getConversionHistory(String curr1,
