@@ -1,5 +1,6 @@
 {
   "base": "AUD",
+  "popular": ["USD", "EUR", "SGD", "JPY"],
   "rates": [
     {"rate": "USD", "data": [
       {

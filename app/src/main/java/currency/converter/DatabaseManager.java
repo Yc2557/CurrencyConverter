@@ -104,11 +104,49 @@ public class DatabaseManager {
 
     // MICHAEL
     public List<String> getPopularCurrencies() {
-        return null;
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new
+                    FileReader("database.json")));
+            JSONArray popular = (JSONArray) database.get("popular");
+
+            return (List<String>) popular;
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
         /*
         Will be set by the admin (create new method)
 
          */
+
+    // Receiving the four most popular currencies from the admin
+    // and updating the database
+    public void addPopularCurrencies(ArrayList<String> currencies) {
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new
+                    FileReader("database.json")));
+            JSONArray popular = new JSONArray();
+
+            for (String curr : currencies) {
+                popular.add(curr);
+            }
+
+            database.put("popular", popular);
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean conversionIncreased(String curr) {
