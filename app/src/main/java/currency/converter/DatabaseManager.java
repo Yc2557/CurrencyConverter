@@ -107,6 +107,11 @@ public class DatabaseManager {
         return null;
     }
 
+    public boolean changePopularCurrencies(String curr1, String curr2) {
+        // Replace popular currencies, if curr1 or curr2 not in database return false
+        return true;
+    }
+
     public boolean rateIncreased(String curr) {
         try {
             JSONParser jsonParser = new JSONParser();
@@ -147,8 +152,8 @@ public class DatabaseManager {
 
     public HashMap<String, Float> getConversionHistory(String curr1,
             String curr2,
-            String startDate,
-            String endDate) {
+            LocalDate startDate,
+            LocalDate endDate) {
         return null;
     }
 

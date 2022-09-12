@@ -37,14 +37,28 @@ public class CurrencyHandler {
                     boolean upDirection = DBM.checkDirection(fromCurrency, toCurrency);
                     if (upDirection) {
                         String data = String.format("{0} (↑)", conversion);
+                        display[i][j] = data;
                     } else {
                         String data = String.format("{0} (↓)", conversion);
+                        display[i][j] = data;
                     }
                 }
             }
         }
 
         return display;
+    }
+
+    public List<String> getPopularCurrencies() {
+        return DBM.getPopularCurrencies();
+    }
+
+    public boolean updatePopular(String curr1, String curr2) {
+        if (DBM.changePopularCurrencies(curr1, curr2)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public Boolean addCurrency(String currency) {
@@ -70,7 +84,7 @@ public class CurrencyHandler {
         }
     }
 
-    public void printConversionHistory(String curr1, String curr2, String startDate, String endDate) {
+    public void printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
         HashMap<String, Float> conversionRates = DBM.getConversionHistory(curr1, curr2, startDate, endDate);
 
         List<Float> listOfRates = new ArrayList<>(conversionRates.values());
