@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.io.FileNotFoundException;
+import java.util.Date;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -66,9 +67,135 @@ public class DatabaseManager {
         }
     }
 
-    public float getPastConversion(String curr1, String curr2, String startDate,
-                                   String endDate) {
-        return 0.000F;
+    public HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
+                                  String endDate) {
+
+        HashMap<String, Float> pastRates = new HashMap<String, Float>();
+
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new
+                    FileReader("database.json")));
+
+
+            if (cur1.equals("AUD") || cur2.equals("AUD")) {
+
+                String referenceCur;
+                if (cur1.equals("AUD")) {
+                    referenceCur = cur2;
+                } else if (cur2.equals("AUD")) {
+                    referenceCur = cur1;
+                }
+
+                JSONArray ratesArray = (JSONArray) database.get("rates");
+                JSONObject cur = (JSONObject) ratesArray.get(getConversionIndex(referenceCur, ratesArray));
+                JSONArray currency1Rates = (JSONArray) cur.get("data");
+
+                for (int i = 0; i < currency1Rates.size(); i++) {
+
+                    JSONObject dateAndRate = (JSONObject) currency1Rates.get(i);
+                    String conversionDate = (String) dateAndRate.get("date");
+
+                    //If conversionDate is between start and end date
+                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate,endDate)) {
+
+                        String rateTransform = (String) dateAndRate.get("rate");
+                        Float actualRate = Float.parseFloat(rateTransform);
+                        pastRates.put(conversionDate, actualRate);
+
+                    } else if (isBefore(endDate, conversionDate)) {
+                        break;
+                    }
+                }
+
+            } else {
+                //Neither currency is AUD, so must find both, and convert through
+                //Each could have different dates, these must be lined up/
+                //Find both, place into hashmaps
+                //use the size() of longer one as a reference for the returner map
+                //(divide by cur1 )* cur2 /
+
+                JSONArray ratesArray = (JSONArray) database.get("rates");
+                JSONObject cur = (JSONObject) ratesArray.get(getConversionIndex(cur1, ratesArray));
+                JSONArray currencyArray = (JSONArray) cur.get("data");
+
+                HashMap<String, Float> currency1Map = new HashMap<String, Float>();
+                HashMap<String, Float> currency2Map = new HashMap<String, Float>();
+
+                //Fill conversion hashmap for curr1
+                for (int i = 0; i < currencyArray.size(); i++) {
+
+                    JSONObject dateAndRate = (JSONObject) currencyArray.get(i);
+                    String conversionDate = (String) dateAndRate.get("date");
+
+                    //If conversionDate is between start and end date
+                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
+
+                        String rateTransform = (String) dateAndRate.get("rate");
+                        Float actualRate = Float.parseFloat(rateTransform);
+                        currency1Map.put(conversionDate, actualRate);
+
+                    } else if (isBefore(endDate, conversionDate)) {
+                        break;
+                    }
+                }
+                //Reuse vars
+                cur = (JSONObject) ratesArray.get(getConversionIndex(cur2, ratesArray));
+                currencyArray = (JSONArray) cur.get("data");
+                //fill hashmap for curr2
+                for (int i = 0; i < currencyArray.size(); i++) {
+
+                    JSONObject dateAndRate = (JSONObject) currencyArray.get(i);
+                    String conversionDate = (String) dateAndRate.get("date");
+
+                    //If conversionDate is between start and end date
+                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
+
+                        String rateTransform = (String) dateAndRate.get("rate");
+                        Float actualRate = Float.parseFloat(rateTransform);
+                        currency1Map.put(conversionDate, actualRate);
+
+                    } else if (isBefore(endDate, conversionDate)) {
+                        break;
+                    }
+                }
+
+                //Pick the larger hashmap to work on
+                if (currency1Map.size() > currency2Map.size()) {
+                    ;
+                } else {
+                    HashMap<String, Float> tempMap = currency1Map;
+                    currency1Map = currency2Map;
+                    currency2Map = tempMap;
+                }
+
+                //For each entry in map 1, find any dates in map2 that are after that entry
+                // and correct the rate for all dates prior to that one/
+                for (Map.Entry<String, Float> entry : currency1Map.entrySet()) {
+                    String key1 = entry.getKey();
+                    Float value1 = entry.getValue();
+
+                    for (Map.Entry<String, Float> map2 : currency2Map.entrySet()) {
+                        String key2 = map2.getKey();
+                        Float value2 = map2.getValue();
+                        if (!isBefore(key1, key2)) {
+                            value1 = value2/value1;
+                        }
+                    }
+                }
+                return currency1Map;
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        return pastRates;
     }
 
     public void addConversion(String curr1, String curr2, float amount, String date) {
@@ -103,14 +230,14 @@ public class DatabaseManager {
     }
 
     // MICHAEL
-    public List<String> getPopularCurrencies() {
+    public ArrayList<String> getPopularCurrencies() {
         try {
             JSONParser jsonParser = new JSONParser();
             JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new
                     FileReader("database.json")));
             JSONArray popular = (JSONArray) database.get("popular");
 
-            return (List<String>) popular;
+            return (ArrayList<String>) popular;
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -223,4 +350,60 @@ public class DatabaseManager {
         }
         return -1;
     }
+
+    //if date1 before date2 : true, if equal: null
+    public static Boolean isBefore(String d1, String d2) {
+
+        String[] date1 = d1.split("-");
+        String[] date2 = d2.split("-");
+
+        Integer year1 = Integer.parseInt(date1[2]);
+        Integer year2 = Integer.parseInt(date2[2]);
+
+        if (year1 > year2) {
+            return false;
+        } else if (year1 < year2) {
+            return true;
+        } else {
+
+            Integer month1 = Integer.parseInt(date1[1]);
+            Integer month2 = Integer.parseInt(date2[1]);
+
+            if (month1 > month2) {
+                return false;
+            } else if (month1 < month2) {
+                return true;
+            } else {
+                Integer day1 = Integer.parseInt(date1[0]);
+                Integer day2 = Integer.parseInt(date2[0]);
+
+                if (day1 > day2) {
+                    return false;
+                } else if (day1 < day2) {
+                    return true;
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public static Integer dateToInt(String d) {
+        String[] dividedDate = d.split("-");
+        String strDate = dividedDate[2] + dividedDate[1] + dividedDate[0];
+        Integer intDate = Integer.parseInt(strDate);
+        return intDate;
+    }
+
+    public static String dateToString(Integer i) {
+        String date = i.toString();
+        String year = date.substring(0,4);
+        String month = date.substring(5,6);
+        String day = date.substring(7,8);
+
+        date = year + "-" + month + "-" + day;
+        return date;
+    }
+
+
 }
