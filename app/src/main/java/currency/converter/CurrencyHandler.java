@@ -21,7 +21,7 @@ public class CurrencyHandler {
     }
 
     public float convertCurrency(float amount, String currCurrency, String newCurrency) {
-        float rate = DBM.getRate(currCurrency, newCurrency); // Need to test whether the rate is as expected
+        float rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
 
         return rate * amount;
     }
@@ -39,7 +39,7 @@ public class CurrencyHandler {
                 }
                 else {
                     float conversion = DBM.getConversion(fromCurrency, toCurrency);
-                    boolean upDirection = DBM.checkDirection(fromCurrency, toCurrency);
+                    boolean upDirection = DBM.conversionIncreased(fromCurrency, toCurrency);
                     if (upDirection) {
                         String data = String.format("{0} (↑)", conversion);
                     } else {

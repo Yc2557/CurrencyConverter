@@ -24,7 +24,7 @@ public class DatabaseManager {
         this.isAdmin = isAdmin;
     }
 
-    public float getConversion(String curr1, String curr2) {
+    public static float getConversion(String fromCurr, String toCurr) {
         try {
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
@@ -34,26 +34,45 @@ public class DatabaseManager {
             // Extracting the rates array from the database
             JSONArray rates = (JSONArray) database.get("rates");
 
-            // Extracting the specific currency objects from the database
-            JSONObject curr1Object = (JSONObject) rates.get(getConversionIndex(curr1, rates));
-            JSONObject curr2Object = (JSONObject) rates.get(getConversionIndex(curr2, rates));
+            if (fromCurr == "AUD") {
+                JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
+                JSONArray currData = (JSONArray) currObject.get("data");
+                JSONObject currRateObject = (JSONObject) currData.get(currData.size()-1);
 
-            // Extracting the arrays for the respective currencies
-            // which contain all the historical & present rates
-            JSONArray curr1Data = (JSONArray) curr1Object.get("data");
-            JSONArray curr2Data = (JSONArray) curr2Object.get("data");
+                // Taking the inverse because the rates are stored TO the AUD in the database
+                float rate = 1 / (float) currRateObject.get("rate");
+                return rate;
+            } else if (toCurr == "AUD") {
+                JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
+                JSONArray currData = (JSONArray) currObject.get("data");
+                JSONObject currRateObject = (JSONObject) currData.get(currData.size()-1);
 
-            // Extracting the most recent exchange rates of the two currencies
-            JSONObject curr1Obj = (JSONObject) curr1Data.get(curr1Data.size()-1);
-            JSONObject curr2Obj = (JSONObject) curr2Data.get(curr2Data.size()-1);
+                // Taking the inverse because the rates are stored TO the AUD in the database
+                float rate = (float) currRateObject.get("rate");
+                return rate;
 
-            // Extracting the most recent rates for each of the currencies
-            float rate1 = (float) curr1Obj.get("rate");
-            float rate2 = (float) curr2Obj.get("rate");
+            } else {
+                // Extracting the specific currency objects from the database
+                JSONObject fromCurrObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
+                JSONObject toCurrObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
 
-            // Calculating & returning the finalised exchange rate between
-            // the two currencies
-            return rate2/rate1;
+                // Extracting the arrays for the respective currencies
+                // which contain all the historical & present rates
+                JSONArray fromCurrData = (JSONArray) fromCurrObject.get("data");
+                JSONArray toCurrData = (JSONArray) toCurrObject.get("data");
+
+                // Extracting the most recent exchange rates of the two currencies
+                JSONObject fromCurrRateObject = (JSONObject) fromCurrData.get(fromCurrData.size()-1);
+                JSONObject toCurrRateObject = (JSONObject) toCurrData.get(toCurrData.size()-1);
+
+                // Extracting the most recent rates for each of the currencies
+                float rate1 = (float) fromCurrRateObject.get("rate");
+                float rate2 = (float) toCurrRateObject.get("rate");
+
+                // Calculating & returning the finalised exchange rate between
+                // the two currencies (rate = to/from)
+                return rate2 / rate1;
+            }
 
             // NOTE: must include error cases; i.e. passing through a non-existent
             // currency
@@ -83,7 +102,7 @@ public class DatabaseManager {
                 String referenceCur;
                 if (cur1.equals("AUD")) {
                     referenceCur = cur2;
-                } else if (cur2.equals("AUD")) {
+                } else {
                     referenceCur = cur1;
                 }
 
@@ -229,7 +248,6 @@ public class DatabaseManager {
         }
     }
 
-    // MICHAEL
     public ArrayList<String> getPopularCurrencies() {
         try {
             JSONParser jsonParser = new JSONParser();
@@ -276,32 +294,72 @@ public class DatabaseManager {
         }
     }
 
-    public boolean conversionIncreased(String curr) {
+    public boolean conversionIncreased(String fromCurr, String toCurr) {
         try {
             JSONParser jsonParser = new JSONParser();
             JSONObject database = (JSONObject) jsonParser.parse(new
                     FileReader("database.json"));
 
             JSONArray rates = (JSONArray) database.get("rates");
-            JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr, rates));
-            JSONArray currArray = (JSONArray) currObject.get("data");
 
-            // Checking if there is at least one other timestamp to compare with
-            if (currArray.size() < 2) {
-                return false;
+            if (fromCurr == "AUD") {
+                JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
+                JSONArray currArray = (JSONArray) currObject.get("data");
+
+                // Checking if there is historical data to compare to
+                if (currArray.size() < 2) {
+                    return false;
+                }
+
+                JSONObject currObj1 = (JSONObject) currArray.get(currArray.size()-1);
+                JSONObject currObj2 = (JSONObject) currArray.get(currArray.size()-2);
+
+                // Getting inverse of stored as it is database stores the values
+                // for every currency TO AUD
+                float rate1 = 1 / (float) currObj1.get("rate");
+                float rate2 = 1 / (float) currObj2.get("rate");
+
+                return rate1 - rate2 > 0;
+
+            } else if (toCurr == "AUD") {
+                JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
+                JSONArray currArray = (JSONArray) currObject.get("data");
+
+                // Checking if there is historical data to compare to
+                if (currArray.size() < 2) {
+                    return false;
+                }
+
+                JSONObject currObj1 = (JSONObject) currArray.get(currArray.size()-1);
+                JSONObject currObj2 = (JSONObject) currArray.get(currArray.size()-2);
+
+                float rate1 = (float) currObj1.get("rate");
+                float rate2 = (float) currObj2.get("rate");
+
+                return rate1 - rate2 > 0;
+            } else {
+                // Get rate and check with previous
+                // Get inverse of stored
+                JSONObject toCurrObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
+                JSONArray toCurrArray = (JSONArray) toCurrObject.get("data");
+                JSONObject fromCurrObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
+                JSONArray fromCurrArray = (JSONArray) fromCurrObject.get("data");
+
+                // Checking if there is historical data to compare to
+                if (toCurrArray.size() < 2 || fromCurrArray.size() < 2) {
+                    return false;
+                }
+
+                JSONObject toCurrObj1 = (JSONObject) toCurrArray.get(toCurrArray.size()-1);
+                JSONObject toCurrObj2 = (JSONObject) toCurrArray.get(toCurrArray.size()-2);
+                JSONObject fromCurrObj1 = (JSONObject) fromCurrArray.get(fromCurrArray.size()-1);
+                JSONObject fromCurrObj2 = (JSONObject) fromCurrArray.get(fromCurrArray.size()-2);
+
+                float rate1 = (float) toCurrObj1.get("rate") / (float) fromCurrObj1.get("rate");
+                float rate2 = (float) toCurrObj2.get("rate") / (float) fromCurrObj2.get("rate");
+
+                return rate1 - rate2 > 0;
             }
-
-            // Getting the currency objects for the different timestamps
-            JSONObject currObj1 = (JSONObject) currArray.get(currArray.size()-1);
-            JSONObject currObj2 = (JSONObject) currArray.get(currArray.size()-2);
-
-            // Extracting the rates at the current & previous timestamps
-            float rate1 = (float) currObj1.get("rate");
-            float rate2 = (float) currObj2.get("rate");
-
-            // Returning whether the rate has increased or not
-            return rate1-rate2>0;
-
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -404,6 +462,5 @@ public class DatabaseManager {
         date = year + "-" + month + "-" + day;
         return date;
     }
-
 
 }

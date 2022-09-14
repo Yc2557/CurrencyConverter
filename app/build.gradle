@@ -52,6 +52,6 @@ test {
     test.finalizedBy jacocoTestReport // <- add this line
 }
 
-run{
+run {
     standardInput = System.in
 }
