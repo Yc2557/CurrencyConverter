@@ -87,7 +87,7 @@ public class DatabaseManager {
     }
 
     public static HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
-                                  String endDate) {
+                                                           String endDate) {
 
         HashMap<String, Float> pastRates = new HashMap<String, Float>();
 
