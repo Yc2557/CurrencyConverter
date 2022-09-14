@@ -1,11 +1,15 @@
 package currency.converter;
 
-import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.time.LocalDate;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.List;
+import java.io.FileNotFoundException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,7 +19,6 @@ import org.json.simple.JSONObject;
 
 public class DatabaseManager {
 
-
     private boolean isAdmin;
     // private JSONParser jsonParser; <-- maybe?
 
@@ -23,7 +26,7 @@ public class DatabaseManager {
         this.isAdmin = isAdmin;
     }
 
-    public float getRate(String curr1, String curr2) {
+    public float getConversion(String curr1, String curr2) {
         try {
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
@@ -60,7 +63,7 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -88,20 +91,25 @@ public class DatabaseManager {
             newCur.put("date", date);
             newCur.put("rate", amount);
 
-            currArray.put(newCur);
+            currArray.add(newCur);
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public List<String> getPopularCurrencies() {
         return null;
+    }
+
+    public boolean changePopularCurrencies(String curr1, String curr2) {
+        // Replace popular currencies, if curr1 or curr2 not in database return false
+        return true;
     }
 
     public boolean rateIncreased(String curr) {
@@ -133,19 +141,19 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String checkDate(String curr1, String curr2) {
+    public LocalDate checkDate(String curr1, String curr2) {
         return null;
     }
 
     public HashMap<String, Float> getConversionHistory(String curr1,
             String curr2,
-            String startDate,
-            String endDate) {
+            LocalDate startDate,
+            LocalDate endDate) {
         return null;
     }
 
@@ -157,5 +165,13 @@ public class DatabaseManager {
             }
         }
         return -1;
+    }
+
+    public boolean checkDirection(String fromCurrency, String toCurrency) {
+        return false;
+    }
+
+    // Delete after, just used for testing
+    public void add(String currency) {
     }
 }
