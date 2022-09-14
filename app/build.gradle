@@ -41,12 +41,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-jacocoTestReport {
-    reports {
-        html.enabled = true
-        csv.enabled = true
+jacocoTestReport { 
+    reports { 
+        html.enabled = true 
+        csv.enabled = true 
     }
-}
+}  
 
 test {
     useJUnitPlatform()
