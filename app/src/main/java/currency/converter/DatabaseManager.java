@@ -86,7 +86,7 @@ public class DatabaseManager {
         }
     }
 
-    public HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
+    public static HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
                                   String endDate) {
 
         HashMap<String, Float> pastRates = new HashMap<String, Float>();
@@ -390,13 +390,6 @@ public class DatabaseManager {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public HashMap<String, Float> getConversionHistory(String curr1,
-                                                       String curr2,
-                                                       String startDate,
-                                                       String endDate){
-        return null;
     }
 
     // Helper function to find the index of a rate object in the array
