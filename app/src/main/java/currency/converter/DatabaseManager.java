@@ -1,21 +1,17 @@
 package currency.converter;
 
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.time.LocalDate;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.io.FileNotFoundException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
-
-import org.json.simple.JSONObject;
 
 public class DatabaseManager {
 
@@ -28,9 +24,11 @@ public class DatabaseManager {
 
     public float getConversion(String curr1, String curr2) {
         try {
+
+            System.out.println(Paths.get("").toAbsolutePath());
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("app/src/main/resources/database.json"));
 
             // Extracting the rates array from the database
             JSONArray rates = (JSONArray) database.get("rates");
@@ -61,8 +59,6 @@ public class DatabaseManager {
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -87,7 +83,7 @@ public class DatabaseManager {
             JSONArray currArray = (JSONArray) currObject.get("data");
 
             // Create a new currency obj, populate it
-            JSONObject newCur = (JSONObject) new JSONObject();
+            JSONObject newCur = new JSONObject();
             newCur.put("date", date);
             newCur.put("rate", amount);
 
@@ -95,8 +91,6 @@ public class DatabaseManager {
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
-            throw new RuntimeException(e);
-        } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -137,10 +131,6 @@ public class DatabaseManager {
             // Returning whether the rate has increased or not
             return rate1 - rate2 > 0;
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

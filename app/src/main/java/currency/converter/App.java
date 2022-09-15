@@ -27,7 +27,7 @@ public class App {
         CurrencyHandler handler = new CurrencyHandler(isAdmin);
 
         // Print out entry message
-        DisplayTool.displayTitle();
+        //DisplayTool.displayTitle();
 
         // Command Line Loop
         do {
@@ -55,7 +55,7 @@ public class App {
                     // Displays popular results
                     String[][] values = handler.displayPopular();
                     List<String> popularCurrencies = handler.getPopularCurrencies();
-                    DisplayTool.displayPopular(values, popularCurrencies);
+                    //DisplayTool.displayPopular(values, popularCurrencies);
 
                 case "update":
                     // Updates dataset
@@ -105,7 +105,7 @@ public class App {
                     exitFlag = true;
                     break;
                 case "help":
-                    DisplayTool.displayHelp();
+                    //DisplayTool.displayHelp();
                 default:
                     System.out.println("The command you've entered is invalid.");
             }
