@@ -18,18 +18,17 @@ import org.json.simple.parser.*;
 public class DatabaseManager {
 
     private boolean isAdmin;
-    //private JSONParser jsonParser; <-- maybe?
+    // private JSONParser jsonParser; <-- maybe?
 
     public DatabaseManager(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
 
-    public static float getConversion(String fromCurr, String toCurr) {
+    public float getConversion(String fromCurr, String toCurr) {
         try {
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new
-                    FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
 
             // Extracting the rates array from the database
             JSONArray rates = (JSONArray) database.get("rates");
@@ -37,7 +36,7 @@ public class DatabaseManager {
             if (fromCurr == "AUD") {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
-                JSONObject currRateObject = (JSONObject) currData.get(currData.size()-1);
+                JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
                 // Taking the inverse because the rates are stored TO the AUD in the database
                 float rate = 1 / (float) currRateObject.get("rate");
@@ -45,7 +44,7 @@ public class DatabaseManager {
             } else if (toCurr == "AUD") {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
-                JSONObject currRateObject = (JSONObject) currData.get(currData.size()-1);
+                JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
                 // Taking the inverse because the rates are stored TO the AUD in the database
                 float rate = (float) currRateObject.get("rate");
@@ -62,8 +61,8 @@ public class DatabaseManager {
                 JSONArray toCurrData = (JSONArray) toCurrObject.get("data");
 
                 // Extracting the most recent exchange rates of the two currencies
-                JSONObject fromCurrRateObject = (JSONObject) fromCurrData.get(fromCurrData.size()-1);
-                JSONObject toCurrRateObject = (JSONObject) toCurrData.get(toCurrData.size()-1);
+                JSONObject fromCurrRateObject = (JSONObject) fromCurrData.get(fromCurrData.size() - 1);
+                JSONObject toCurrRateObject = (JSONObject) toCurrData.get(toCurrData.size() - 1);
 
                 // Extracting the most recent rates for each of the currencies
                 float rate1 = (float) fromCurrRateObject.get("rate");
@@ -87,15 +86,13 @@ public class DatabaseManager {
     }
 
     public static HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
-                                                           String endDate) {
+            String endDate) {
 
         HashMap<String, Float> pastRates = new HashMap<String, Float>();
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new
-                    FileReader("database.json")));
-
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
 
             if (cur1.equals("AUD") || cur2.equals("AUD")) {
 
@@ -115,8 +112,8 @@ public class DatabaseManager {
                     JSONObject dateAndRate = (JSONObject) currency1Rates.get(i);
                     String conversionDate = (String) dateAndRate.get("date");
 
-                    //If conversionDate is between start and end date
-                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate,endDate)) {
+                    // If conversionDate is between start and end date
+                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
                         Float actualRate = Float.parseFloat(rateTransform);
@@ -128,11 +125,11 @@ public class DatabaseManager {
                 }
 
             } else {
-                //Neither currency is AUD, so must find both, and convert through
-                //Each could have different dates, these must be lined up/
-                //Find both, place into hashmaps
-                //use the size() of longer one as a reference for the returner map
-                //(divide by cur1 )* cur2 /
+                // Neither currency is AUD, so must find both, and convert through
+                // Each could have different dates, these must be lined up/
+                // Find both, place into hashmaps
+                // use the size() of longer one as a reference for the returner map
+                // (divide by cur1 )* cur2 /
 
                 JSONArray ratesArray = (JSONArray) database.get("rates");
                 JSONObject cur = (JSONObject) ratesArray.get(getConversionIndex(cur1, ratesArray));
@@ -141,13 +138,13 @@ public class DatabaseManager {
                 HashMap<String, Float> currency1Map = new HashMap<String, Float>();
                 HashMap<String, Float> currency2Map = new HashMap<String, Float>();
 
-                //Fill conversion hashmap for curr1
+                // Fill conversion hashmap for curr1
                 for (int i = 0; i < currencyArray.size(); i++) {
 
                     JSONObject dateAndRate = (JSONObject) currencyArray.get(i);
                     String conversionDate = (String) dateAndRate.get("date");
 
-                    //If conversionDate is between start and end date
+                    // If conversionDate is between start and end date
                     if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
@@ -158,16 +155,16 @@ public class DatabaseManager {
                         break;
                     }
                 }
-                //Reuse vars
+                // Reuse vars
                 cur = (JSONObject) ratesArray.get(getConversionIndex(cur2, ratesArray));
                 currencyArray = (JSONArray) cur.get("data");
-                //fill hashmap for curr2
+                // fill hashmap for curr2
                 for (int i = 0; i < currencyArray.size(); i++) {
 
                     JSONObject dateAndRate = (JSONObject) currencyArray.get(i);
                     String conversionDate = (String) dateAndRate.get("date");
 
-                    //If conversionDate is between start and end date
+                    // If conversionDate is between start and end date
                     if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
@@ -179,7 +176,7 @@ public class DatabaseManager {
                     }
                 }
 
-                //Pick the larger hashmap to work on
+                // Pick the larger hashmap to work on
                 if (currency1Map.size() > currency2Map.size()) {
                     ;
                 } else {
@@ -188,7 +185,7 @@ public class DatabaseManager {
                     currency2Map = tempMap;
                 }
 
-                //For each entry in map 1, find any dates in map2 that are after that entry
+                // For each entry in map 1, find any dates in map2 that are after that entry
                 // and correct the rate for all dates prior to that one/
                 for (Map.Entry<String, Float> entry : currency1Map.entrySet()) {
                     String key1 = entry.getKey();
@@ -198,7 +195,7 @@ public class DatabaseManager {
                         String key2 = map2.getKey();
                         Float value2 = map2.getValue();
                         if (!isBefore(key1, key2)) {
-                            value1 = value2/value1;
+                            value1 = value2 / value1;
                         }
                     }
                 }
@@ -213,7 +210,6 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
 
-
         return pastRates;
     }
 
@@ -221,17 +217,16 @@ public class DatabaseManager {
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new
-                    FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
 
-            //Get the rates array, relevant currency array
+            // Get the rates array, relevant currency array
             JSONArray rates = (JSONArray) database.get("rates");
             JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr1, rates));
 
-            //Get the date:rate array from that currency
+            // Get the date:rate array from that currency
             JSONArray currArray = (JSONArray) currObject.get("data");
 
-            //Create a new currency obj, populate it
+            // Create a new currency obj, populate it
             JSONObject newCur = (JSONObject) new JSONObject();
             newCur.put("date", date);
             newCur.put("rate", amount);
@@ -251,8 +246,7 @@ public class DatabaseManager {
     public ArrayList<String> getPopularCurrencies() {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new
-                    FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
             JSONArray popular = (JSONArray) database.get("popular");
 
             return (ArrayList<String>) popular;
@@ -265,18 +259,17 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
     }
-        /*
-        Will be set by the admin (create new method)
-
-         */
+    /*
+     * Will be set by the admin (create new method)
+     * 
+     */
 
     // Receiving the four most popular currencies from the admin
     // and updating the database
-    public void addPopularCurrencies(ArrayList<String> currencies) {
+    public boolean addPopularCurrencies(ArrayList<String> currencies) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new
-                    FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
             JSONArray popular = new JSONArray();
 
             for (String curr : currencies) {
@@ -297,8 +290,7 @@ public class DatabaseManager {
     public boolean conversionIncreased(String fromCurr, String toCurr) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new
-                    FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
 
             JSONArray rates = (JSONArray) database.get("rates");
 
@@ -311,8 +303,8 @@ public class DatabaseManager {
                     return false;
                 }
 
-                JSONObject currObj1 = (JSONObject) currArray.get(currArray.size()-1);
-                JSONObject currObj2 = (JSONObject) currArray.get(currArray.size()-2);
+                JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
+                JSONObject currObj2 = (JSONObject) currArray.get(currArray.size() - 2);
 
                 // Getting inverse of stored as it is database stores the values
                 // for every currency TO AUD
@@ -330,8 +322,8 @@ public class DatabaseManager {
                     return false;
                 }
 
-                JSONObject currObj1 = (JSONObject) currArray.get(currArray.size()-1);
-                JSONObject currObj2 = (JSONObject) currArray.get(currArray.size()-2);
+                JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
+                JSONObject currObj2 = (JSONObject) currArray.get(currArray.size() - 2);
 
                 float rate1 = (float) currObj1.get("rate");
                 float rate2 = (float) currObj2.get("rate");
@@ -350,10 +342,10 @@ public class DatabaseManager {
                     return false;
                 }
 
-                JSONObject toCurrObj1 = (JSONObject) toCurrArray.get(toCurrArray.size()-1);
-                JSONObject toCurrObj2 = (JSONObject) toCurrArray.get(toCurrArray.size()-2);
-                JSONObject fromCurrObj1 = (JSONObject) fromCurrArray.get(fromCurrArray.size()-1);
-                JSONObject fromCurrObj2 = (JSONObject) fromCurrArray.get(fromCurrArray.size()-2);
+                JSONObject toCurrObj1 = (JSONObject) toCurrArray.get(toCurrArray.size() - 1);
+                JSONObject toCurrObj2 = (JSONObject) toCurrArray.get(toCurrArray.size() - 2);
+                JSONObject fromCurrObj1 = (JSONObject) fromCurrArray.get(fromCurrArray.size() - 1);
+                JSONObject fromCurrObj2 = (JSONObject) fromCurrArray.get(fromCurrArray.size() - 2);
 
                 float rate1 = (float) toCurrObj1.get("rate") / (float) fromCurrObj1.get("rate");
                 float rate2 = (float) toCurrObj2.get("rate") / (float) fromCurrObj2.get("rate");
@@ -373,13 +365,12 @@ public class DatabaseManager {
     public String checkDate(String curr) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new
-                    FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
 
             JSONArray rates = (JSONArray) database.get("rates");
             JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr, rates));
             JSONArray currArray = (JSONArray) currObject.get("data");
-            JSONObject currPresentRate = (JSONObject) currArray.get(currArray.size()-1);
+            JSONObject currPresentRate = (JSONObject) currArray.get(currArray.size() - 1);
 
             return (String) currPresentRate.get("date");
 
@@ -394,7 +385,7 @@ public class DatabaseManager {
 
     // Helper function to find the index of a rate object in the array
     public static int getConversionIndex(String curr, JSONArray array) {
-        for (int i=0; i<array.size(); i++) {
+        for (int i = 0; i < array.size(); i++) {
             if (curr.equals(array.get(i))) {
                 return i;
             }
@@ -402,7 +393,7 @@ public class DatabaseManager {
         return -1;
     }
 
-    //if date1 before date2 : true, if equal: null
+    // if date1 before date2 : true, if equal: null
     public static Boolean isBefore(String d1, String d2) {
 
         String[] date1 = d1.split("-");
@@ -448,9 +439,9 @@ public class DatabaseManager {
 
     public static String dateToString(Integer i) {
         String date = i.toString();
-        String year = date.substring(0,4);
-        String month = date.substring(5,6);
-        String day = date.substring(7,8);
+        String year = date.substring(0, 4);
+        String month = date.substring(5, 6);
+        String day = date.substring(7, 8);
 
         date = year + "-" + month + "-" + day;
         return date;

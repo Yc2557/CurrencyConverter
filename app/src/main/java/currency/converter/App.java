@@ -70,10 +70,12 @@ public class App {
 
                 case "update-popular":
                     // Updates popular currencies
-                    if (input_list.length == 3) {
-                        String currCurrency = input_list[1];
-                        String newCurrency = input_list[2];
-                        handler.updatePopular(currCurrency, newCurrency);
+                    if (input_list.length == 5) {
+                        String curr1 = input_list[1];
+                        String curr2 = input_list[2];
+                        String curr3 = input_list[3];
+                        String curr4 = input_list[4];
+                        handler.updatePopular(curr1, curr2, curr3, curr4);
                     } else {
                         System.out.println("Invalid number of arguments");
                     }

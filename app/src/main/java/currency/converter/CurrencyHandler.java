@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-
 public class CurrencyHandler {
     private CurrencyCalculator currCalc;
     private DatabaseManager DBM;
@@ -57,8 +56,16 @@ public class CurrencyHandler {
         return DBM.getPopularCurrencies();
     }
 
-    public boolean updatePopular(String curr1, String curr2) {
-        if (DBM.changePopularCurrencies(curr1, curr2)) {
+    public boolean updatePopular(String curr1, String curr2, String curr3, String curr4) {
+        ArrayList<String> currencies = new ArrayList<String>() {
+            {
+                add(curr1);
+                add(curr2);
+                add(curr3);
+                add(curr4);
+            }
+        };
+        if (DBM.addPopularCurrencies(currencies)) {
             return true;
         } else {
             return false;

@@ -30,7 +30,7 @@ public class DisplayTool {
         System.out.println(
                 "update [curr1] [curr2] [new-rate] - updates the currency conversion from curr1 to curr2 with new-rate");
         System.out.println(
-                "update-popular [curr1] [curr2] - updates the current popular currency curr1 to another curr2");
+                "update-popular [curr1] [curr2] [curr3] [curr4] - updates the current popular currencies to the four user inputs");
         System.out.println("add [curr1] - adds a new exchange rate");
         System.out.println(
                 "summary [curr1] [curr2] [start-date] [end-date] - displays the conversion history of curr1 to curr2, with date given in dd/mm/yyyy format");
