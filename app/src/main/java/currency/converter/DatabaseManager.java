@@ -28,7 +28,7 @@ public class DatabaseManager {
         try {
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("src/main/java/currency/converter/database.json"));
 
             // Extracting the rates array from the database
             JSONArray rates = (JSONArray) database.get("rates");
@@ -285,6 +285,7 @@ public class DatabaseManager {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
     public boolean conversionIncreased(String fromCurr, String toCurr) {

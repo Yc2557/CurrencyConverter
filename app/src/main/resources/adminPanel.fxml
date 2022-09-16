@@ -21,7 +21,7 @@
          </font>
       </Text>
       <TextField fx:id="addCurrencyText" layoutX="34.0" layoutY="109.0" />
-      <Button fx:id="addCurrencyAction" layoutX="197.0" layoutY="109.0" mnemonicParsing="false" text="Add" />
+      <Button fx:id="addCurrencyButton" layoutX="197.0" layoutY="109.0" mnemonicParsing="false" onAction="#addCurrencyAction" text="Add" />
       <Text layoutX="37.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Update Rates">
          <font>
             <Font size="14.0" />
@@ -31,7 +31,7 @@
       <Text layoutX="105.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To" />
       <ChoiceBox fx:id="toCurrencyChoice" layoutX="127.0" layoutY="182.0" prefHeight="26.0" prefWidth="59.0" />
       <TextField fx:id="updateRateText" layoutX="37.0" layoutY="217.0" prefHeight="26.0" prefWidth="122.0" />
-      <Button fx:id="updateRateAction" layoutX="174.0" layoutY="217.0" mnemonicParsing="false" text="Update" />
+      <Button fx:id="updateRateButton" layoutX="174.0" layoutY="217.0" mnemonicParsing="false" onAction="#updateRateAction" text="Update" />
       <Text layoutX="40.0" layoutY="299.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Popular">
          <font>
             <Font size="14.0" />
@@ -46,6 +46,6 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <Button fx:id="backAction" layoutX="532.0" layoutY="360.0" mnemonicParsing="false" text="Back" />
+      <Button fx:id="backButton" layoutX="532.0" layoutY="360.0" mnemonicParsing="false" onAction="#backAction" text="Back" />
    </children>
 </AnchorPane>
