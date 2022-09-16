@@ -15,13 +15,15 @@ import java.io.IOException;
 public class mainPanelController {
 
     @FXML
-    private Button b1;
+    private Button convertCurrencyButton;
 
     @FXML
-    private Button b2;
+    private Button viewHistoryButton;
 
     @FXML
-    private Button b3;
+    private Button viewPopularButton;
+    @FXML
+    private Button adminPanelButton;
 
     @FXML
     private Button backButton;
@@ -32,10 +34,10 @@ public class mainPanelController {
     public void initScene(String type) {
         if (type.equalsIgnoreCase("user")) {
             welcomeText.setText("Welcome, User!");
-            b3.setVisible(false);
+            adminPanelButton.setVisible(false);
         } else {
             welcomeText.setText("Welcome, Admin!");
-            b3.setDisable(false);
+            adminPanelButton.setDisable(false);
         }
     }
 
