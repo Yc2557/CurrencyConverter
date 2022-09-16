@@ -1,0 +1,24 @@
+{
+  "base": "AUD",
+  "popular": ["USD", "EUR", "SGD", "JPY"],
+  "rates": [
+    {"rate": "USD", "data": [
+      {
+        "date": "01-09-2022",
+        "rate": 0.677
+      }
+    ]},
+    {"rate": "EUR", "data": [
+      {
+        "date": "01-09-2022",
+        "rate": 0.681
+      }
+    ]},
+    {"rate": "SGD", "data": [
+      {
+        "date": "01-09-2022",
+        "rate": 0.950
+      }
+    ]}
+  ]
+}
