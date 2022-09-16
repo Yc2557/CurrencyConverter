@@ -39,11 +39,28 @@ public class mainPanelController {
         }
     }
 
-    public void backAction(ActionEvent event) throws IOException {
+    public Scene changeScene(String filename) throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("login.fxml"));
+        loader.setLocation(getClass().getResource(filename));
         Parent root = loader.load();
-        Scene mainPanelView = new Scene(root);
+
+        return new Scene(root);
+
+    }
+
+    public void backAction(ActionEvent event) throws IOException {
+
+        Scene mainPanelView = changeScene("login.fxml");
+
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        window.setScene(mainPanelView);
+        window.show();
+    }
+
+    public void adminButtonAction(ActionEvent event) throws IOException {
+
+        Scene mainPanelView = changeScene("adminPanel.fxml");
 
         Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
 

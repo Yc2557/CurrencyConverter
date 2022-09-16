@@ -8,8 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="currency.converter.AdminPanelController">
    <children>
       <Text layoutX="37.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel">
          <font>
@@ -21,32 +20,32 @@
             <Font size="14.0" />
          </font>
       </Text>
-      <TextField layoutX="34.0" layoutY="109.0" />
-      <Button layoutX="197.0" layoutY="109.0" mnemonicParsing="false" text="Button" />
+      <TextField fx:id="addCurrencyText" layoutX="34.0" layoutY="109.0" />
+      <Button fx:id="addCurrencyAction" layoutX="197.0" layoutY="109.0" mnemonicParsing="false" text="Add" />
       <Text layoutX="37.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Update Rates">
          <font>
             <Font size="14.0" />
          </font>
       </Text>
-      <ChoiceBox layoutX="37.0" layoutY="182.0" prefHeight="26.0" prefWidth="59.0" />
+      <ChoiceBox fx:id="fromCurrencyChoice" layoutX="37.0" layoutY="182.0" prefHeight="26.0" prefWidth="59.0" />
       <Text layoutX="105.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To" />
-      <ChoiceBox layoutX="127.0" layoutY="182.0" prefHeight="26.0" prefWidth="59.0" />
-      <TextField layoutX="37.0" layoutY="217.0" prefHeight="26.0" prefWidth="122.0" />
-      <Button layoutX="174.0" layoutY="217.0" mnemonicParsing="false" text="Button" />
+      <ChoiceBox fx:id="toCurrencyChoice" layoutX="127.0" layoutY="182.0" prefHeight="26.0" prefWidth="59.0" />
+      <TextField fx:id="updateRateText" layoutX="37.0" layoutY="217.0" prefHeight="26.0" prefWidth="122.0" />
+      <Button fx:id="updateRateAction" layoutX="174.0" layoutY="217.0" mnemonicParsing="false" text="Update" />
       <Text layoutX="40.0" layoutY="299.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Popular">
          <font>
             <Font size="14.0" />
          </font>
       </Text>
-      <ChoiceBox layoutX="37.0" layoutY="309.0" prefHeight="26.0" prefWidth="59.0" />
-      <ChoiceBox layoutX="109.0" layoutY="309.0" prefHeight="26.0" prefWidth="59.0" />
-      <Button layoutX="174.0" layoutY="309.0" mnemonicParsing="false" text="Button" />
+      <ChoiceBox fx:id="popularNumChoice" layoutX="37.0" layoutY="309.0" prefHeight="26.0" prefWidth="59.0" />
+      <ChoiceBox fx:id="changeToChoice" layoutX="109.0" layoutY="309.0" prefHeight="26.0" prefWidth="59.0" />
+      <Button fx:id="changePopularButton" layoutX="174.0" layoutY="309.0" mnemonicParsing="false" text="Change" />
       <ListView layoutX="320.0" layoutY="1.0" prefHeight="400.0" prefWidth="280.0" />
       <Text layoutX="363.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Most Popular Currencies">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <Button layoutX="532.0" layoutY="360.0" mnemonicParsing="false" text="Button" />
+      <Button fx:id="backAction" layoutX="532.0" layoutY="360.0" mnemonicParsing="false" text="Back" />
    </children>
 </AnchorPane>
