@@ -1,6 +1,5 @@
 package currency.converter;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -8,9 +7,7 @@ import java.util.HashMap;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Iterator;
 import java.io.FileNotFoundException;
-import java.util.Date;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -39,21 +36,19 @@ public class DatabaseManager {
                 return 0;
             }
 
-            if (fromCurr == "AUD") {
+            if (fromCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
-                float rate = (float) currRateObject.get("rate");
-                return rate;
-            } else if (toCurr == "AUD") {
+                return (float) currRateObject.get("rate");
+            } else if (toCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
                 // Taking the inverse because the rates are stored FROM the AUD in the database
-                float rate = 1 / (float) currRateObject.get("rate");
-                return rate;
+                return 1 / (float) currRateObject.get("rate");
 
             } else {
                 // Extracting the specific currency objects from the database
@@ -83,9 +78,7 @@ public class DatabaseManager {
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -93,7 +86,7 @@ public class DatabaseManager {
     public HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
             String endDate) {
 
-        HashMap<String, Float> pastRates = new HashMap<String, Float>();
+        HashMap<String, Float> pastRates = new HashMap<>();
 
         try {
             JSONParser jsonParser = new JSONParser();
@@ -112,19 +105,19 @@ public class DatabaseManager {
                 JSONObject cur = (JSONObject) ratesArray.get(getConversionIndex(referenceCur, ratesArray));
                 JSONArray currency1Rates = (JSONArray) cur.get("data");
 
-                for (int i = 0; i < currency1Rates.size(); i++) {
+                for (Object currency1Rate : currency1Rates) {
 
-                    JSONObject dateAndRate = (JSONObject) currency1Rates.get(i);
+                    JSONObject dateAndRate = (JSONObject) currency1Rate;
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate)) && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
                         Float actualRate = Float.parseFloat(rateTransform);
                         pastRates.put(conversionDate, actualRate);
 
-                    } else if (isBefore(endDate, conversionDate)) {
+                    } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
                         break;
                     }
                 }
@@ -140,23 +133,23 @@ public class DatabaseManager {
                 JSONObject cur = (JSONObject) ratesArray.get(getConversionIndex(cur1, ratesArray));
                 JSONArray currencyArray = (JSONArray) cur.get("data");
 
-                HashMap<String, Float> currency1Map = new HashMap<String, Float>();
-                HashMap<String, Float> currency2Map = new HashMap<String, Float>();
+                HashMap<String, Float> currency1Map = new HashMap<>();
+                HashMap<String, Float> currency2Map = new HashMap<>();
 
                 // Fill conversion hashmap for curr1
-                for (int i = 0; i < currencyArray.size(); i++) {
+                for (Object o : currencyArray) {
 
-                    JSONObject dateAndRate = (JSONObject) currencyArray.get(i);
+                    JSONObject dateAndRate = (JSONObject) o;
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate)) && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
                         Float actualRate = Float.parseFloat(rateTransform);
                         currency1Map.put(conversionDate, actualRate);
 
-                    } else if (isBefore(endDate, conversionDate)) {
+                    } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
                         break;
                     }
                 }
@@ -164,19 +157,19 @@ public class DatabaseManager {
                 cur = (JSONObject) ratesArray.get(getConversionIndex(cur2, ratesArray));
                 currencyArray = (JSONArray) cur.get("data");
                 // fill hashmap for curr2
-                for (int i = 0; i < currencyArray.size(); i++) {
+                for (Object o : currencyArray) {
 
-                    JSONObject dateAndRate = (JSONObject) currencyArray.get(i);
+                    JSONObject dateAndRate = (JSONObject) o;
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate)) && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
                         Float actualRate = Float.parseFloat(rateTransform);
                         currency1Map.put(conversionDate, actualRate);
 
-                    } else if (isBefore(endDate, conversionDate)) {
+                    } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
                         break;
                     }
                 }
@@ -207,11 +200,7 @@ public class DatabaseManager {
                 return currency1Map;
             }
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
 
@@ -232,7 +221,7 @@ public class DatabaseManager {
             JSONArray currArray = (JSONArray) currObject.get("data");
 
             // Create a new currency obj, populate it
-            JSONObject newCur = (JSONObject) new JSONObject();
+            JSONObject newCur = new JSONObject();
             newCur.put("date", date);
             newCur.put("rate", amount);
 
@@ -241,9 +230,7 @@ public class DatabaseManager {
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -262,15 +249,11 @@ public class DatabaseManager {
             rates.add(currency);
             database.put("rates", rates);
 
-            FileWriter writer = new FileWriter("database.json");
+            FileWriter writer = new FileWriter(FILE_NAME);
             writer.write(database.toJSONString());
             writer.close();
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -281,13 +264,15 @@ public class DatabaseManager {
             JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
             JSONArray popular = (JSONArray) database.get("popular");
 
-            return (ArrayList<String>) popular;
+            ArrayList<String> list = new ArrayList<>();
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < popular.size(); i++) {
+                list.add(popular.get(i).toString());
+            }
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+            return list;
+
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -312,11 +297,7 @@ public class DatabaseManager {
 
             return true;
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
 
@@ -335,7 +316,7 @@ public class DatabaseManager {
                 return null;
             }
 
-            if (fromCurr == "AUD") {
+            if (fromCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray currArray = (JSONArray) currObject.get("data");
 
@@ -352,7 +333,7 @@ public class DatabaseManager {
 
                 return rate1 - rate2 > 0;
 
-            } else if (toCurr == "AUD") {
+            } else if (toCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray currArray = (JSONArray) currObject.get("data");
 
@@ -394,11 +375,7 @@ public class DatabaseManager {
 
                 return rate1 - rate2 > 0;
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -422,11 +399,7 @@ public class DatabaseManager {
 
             return (String) currPresentRate.get("date");
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -447,8 +420,8 @@ public class DatabaseManager {
         String[] date1 = d1.split("-");
         String[] date2 = d2.split("-");
 
-        Integer year1 = Integer.parseInt(date1[2]);
-        Integer year2 = Integer.parseInt(date2[2]);
+        int year1 = Integer.parseInt(date1[2]);
+        int year2 = Integer.parseInt(date2[2]);
 
         if (year1 > year2) {
             return false;
@@ -456,16 +429,16 @@ public class DatabaseManager {
             return true;
         } else {
 
-            Integer month1 = Integer.parseInt(date1[1]);
-            Integer month2 = Integer.parseInt(date2[1]);
+            int month1 = Integer.parseInt(date1[1]);
+            int month2 = Integer.parseInt(date2[1]);
 
             if (month1 > month2) {
                 return false;
             } else if (month1 < month2) {
                 return true;
             } else {
-                Integer day1 = Integer.parseInt(date1[0]);
-                Integer day2 = Integer.parseInt(date2[0]);
+                int day1 = Integer.parseInt(date1[0]);
+                int day2 = Integer.parseInt(date2[0]);
 
                 if (day1 > day2) {
                     return false;
@@ -481,8 +454,7 @@ public class DatabaseManager {
     public static Integer dateToInt(String d) {
         String[] dividedDate = d.split("-");
         String strDate = dividedDate[2] + dividedDate[1] + dividedDate[0];
-        Integer intDate = Integer.parseInt(strDate);
-        return intDate;
+        return Integer.parseInt(strDate);
     }
 
     public static String dateToString(Integer i) {
@@ -497,7 +469,7 @@ public class DatabaseManager {
 
     public static Boolean currencyExists(String curr, JSONArray rates) {
         // Checking that currency exists
-        if (curr == "AUD") {
+        if (curr.equalsIgnoreCase("AUD")) {
             return true;
         } else {
             int currConvIndex = getConversionIndex(curr, rates);
