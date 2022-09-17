@@ -51,12 +51,13 @@ public class App {
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
+                    break;
                 case "display":
                     // Displays popular results
                     String[][] values = handler.displayPopular();
                     List<String> popularCurrencies = handler.getPopularCurrencies();
                     DisplayTool.displayPopular(values, popularCurrencies);
-
+                    break;
                 case "update":
                     // Updates dataset
                     if (input_list.length == 4) {
@@ -67,7 +68,7 @@ public class App {
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
-
+                    break;
                 case "update-popular":
                     // Updates popular currencies
                     if (input_list.length == 5) {
@@ -79,6 +80,7 @@ public class App {
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
+                    break;
                 case "add":
                     // Add exchange rate
                     if (input_list.length == 2) {
@@ -87,6 +89,7 @@ public class App {
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
+                    break;
                 case "summary":
                     // Print out conversion history of two currencies
                     if (input_list.length == 3) {
@@ -108,6 +111,7 @@ public class App {
                     break;
                 case "help":
                     DisplayTool.displayHelp();
+                    break;
                 default:
                     System.out.println("The command you've entered is invalid.");
             }

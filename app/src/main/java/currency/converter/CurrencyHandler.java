@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class CurrencyHandler {
     private CurrencyCalculator currCalc;
@@ -73,7 +72,7 @@ public class CurrencyHandler {
     }
 
     public Boolean addCurrency(String currency) {
-        this.DBM.add(currency); // add new currency to the json
+        this.DBM.addCurrency(currency); // add new currency to the json
 
         return Boolean.TRUE;
     }
@@ -88,15 +87,16 @@ public class CurrencyHandler {
     }
 
     public void updateCurrency(String curr1, String curr2, float newRate, LocalDate date) {
-        LocalDate recentDate = DBM.checkDate(curr1, curr2);
-        if (!recentDate.equals(date)) {
+        String recentDate = DBM.checkDate(curr1);
+        if (!recentDate.equals(date.toString())) {
             // can convert date to a string if needed, left as LocalDate
-            DBM.addRate(curr1, curr2, newRate, "tempDate"); // Made this for testing
+            DBM.addConversion(curr1, curr2, newRate, date.toString()); // Made this for testing
         }
     }
 
     public void printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
-        HashMap<String, Float> conversionRates = DBM.getConversionHistory(curr1, curr2, startDate, endDate);
+        HashMap<String, Float> conversionRates = DBM.getPastConversion(curr1, curr2, startDate.toString(),
+                endDate.toString());
 
         List<Float> listOfRates = new ArrayList<>(conversionRates.values());
         Map<String, Float> statMap = currCalc.calculateStatistic(listOfRates);

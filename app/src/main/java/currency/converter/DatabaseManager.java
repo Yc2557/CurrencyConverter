@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.io.FileNotFoundException;
@@ -85,7 +86,7 @@ public class DatabaseManager {
         }
     }
 
-    public static HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
+    public HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
             String endDate) {
 
         HashMap<String, Float> pastRates = new HashMap<String, Float>();
@@ -243,6 +244,33 @@ public class DatabaseManager {
         }
     }
 
+    public void addCurrency(String curr) {
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
+            JSONArray rates = (JSONArray) database.get("rates");
+
+            // Creating the new currency object
+            JSONObject currency = new JSONObject();
+            JSONArray data = new JSONArray();
+            currency.put("rate", curr);
+            currency.put("data", data);
+            rates.add(currency);
+            database.put("rates", rates);
+
+            FileWriter writer = new FileWriter("database.json");
+            writer.write(database.toJSONString());
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ArrayList<String> getPopularCurrencies() {
         try {
             JSONParser jsonParser = new JSONParser();
@@ -278,6 +306,8 @@ public class DatabaseManager {
 
             database.put("popular", popular);
 
+            return true;
+
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -285,6 +315,8 @@ public class DatabaseManager {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+
+        // Needs error checking return false;
     }
 
     public boolean conversionIncreased(String fromCurr, String toCurr) {
