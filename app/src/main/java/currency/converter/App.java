@@ -3,6 +3,7 @@
  */
 package currency.converter;
 
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.List;
 
@@ -13,17 +14,11 @@ public class App {
     public static void main(String[] args) {
         // Initialise variables
         Scanner sc = new Scanner(System.in);
-        String input = "";
-        Boolean exitFlag = false;
-        Boolean isAdmin = false;
+        String input;
+        boolean exitFlag = false;
+        boolean isAdmin = Objects.equals(args[0], "admin");
 
         // Set user to admin if command arg given
-        if (args.length == 0) {
-            isAdmin = false;
-
-        } else if (args[0] == "admin") {
-            isAdmin = true;
-        }
         CurrencyHandler handler = new CurrencyHandler(isAdmin);
 
         // Print out entry message
