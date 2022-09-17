@@ -81,14 +81,13 @@ public class DatabaseTests {
             SGD_rate.put("rate", 0.950);
             SGD.put("data", SGD_data);
 
-
             File file = new File("database.json");
             file.createNewFile();
             FileWriter writer = new FileWriter(file);
             writer.write(database.toJSONString());
 
-//            // Setting the database to
-//            this.database = database;
+            // // Setting the database to
+            // this.database = database;
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -96,7 +95,7 @@ public class DatabaseTests {
     }
 
     @Test
-    void testGetConvesion() {
+    void testGetConversion() {
         DatabaseManager dbm = new DatabaseManager(true);
 
         assertEquals(dbm.getConversion("EUR", "AUD"), 1.468);
@@ -111,19 +110,20 @@ public class DatabaseTests {
     void testAddCurrency() {
         DatabaseManager dbm = new DatabaseManager(true);
 
-
     }
 
     @Test
     void testGetPopularCurrencies() {
         DatabaseManager dbm = new DatabaseManager(true);
 
-        ArrayList<String> popular = new ArrayList<String>() {{
-            add("USD");
-            add("EUR");
-            add("SGD");
-            add("JPY");
-        }};
+        ArrayList<String> popular = new ArrayList<String>() {
+            {
+                add("USD");
+                add("EUR");
+                add("SGD");
+                add("JPY");
+            }
+        };
 
         assertEquals(dbm.getPopularCurrencies(), popular);
     }
@@ -132,12 +132,14 @@ public class DatabaseTests {
     void testAddPopularCurrencies() {
         DatabaseManager dbm = new DatabaseManager(true);
 
-        ArrayList<String> popular = new ArrayList<String>() {{
-            add("HKD");
-            add("GBP");
-            add("CHF");
-            add("KRW");
-        }};
+        ArrayList<String> popular = new ArrayList<String>() {
+            {
+                add("HKD");
+                add("GBP");
+                add("CHF");
+                add("KRW");
+            }
+        };
 
         dbm.addPopularCurrencies(popular);
 

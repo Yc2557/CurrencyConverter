@@ -46,8 +46,13 @@ public class App {
                         String newCurrency = input_list[2];
                         float amount = Float.parseFloat(input_list[3]);
                         float currency = handler.convertCurrency(amount, currCurrency, newCurrency);
-                        System.out.println(
-                                "The conversion of " + amount + currCurrency + " is: " + currency + " " + newCurrency);
+                        if (currency == 0) {
+                            System.out.println("Invalid currrency inputted, please try again.");
+                        } else {
+                            System.out.println(
+                                    "The conversion of " + amount + " " + currCurrency + " is: " + currency + " "
+                                            + newCurrency);
+                        }
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
@@ -105,6 +110,7 @@ public class App {
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
+                    break;
                 case "exit":
                     System.out.println("Have a good day!");
                     exitFlag = true;
