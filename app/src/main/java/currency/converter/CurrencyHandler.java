@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class CurrencyHandler {
-    private CurrencyCalculator currCalc;
-    private DatabaseManager DBM;
+    private final CurrencyCalculator currCalc;
+    private final DatabaseManager DBM;
     private boolean isAdmin;
 
     public CurrencyHandler(boolean admin) {

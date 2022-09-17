@@ -97,7 +97,7 @@ public class DatabaseTests {
 
     @Test
     void testGetConvesion() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("database.json");
 
         assertEquals(dbm.getConversion("EUR", "AUD"), 1.468);
         assertEquals(dbm.getConversion("AUD", "EUR"), 0.681);
@@ -109,14 +109,14 @@ public class DatabaseTests {
 
     @Test
     void testAddCurrency() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
 
     }
 
     @Test
     void testGetPopularCurrencies() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         ArrayList<String> popular = new ArrayList<String>() {{
             add("USD");
@@ -130,7 +130,7 @@ public class DatabaseTests {
 
     @Test
     void testAddPopularCurrencies() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         ArrayList<String> popular = new ArrayList<String>() {{
             add("HKD");
@@ -146,7 +146,7 @@ public class DatabaseTests {
 
     @Test
     void testConversionIncreased() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         assertTrue(dbm.conversionIncreased("AUD", "USD"));
         assertFalse(dbm.conversionIncreased("USD", "AUD"));
@@ -163,7 +163,7 @@ public class DatabaseTests {
 
     @Test
     void testCheckDate() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         assertEquals(dbm.checkDate("USD"), "10-09-2022");
         assertNull(dbm.checkDate("XRP"));
