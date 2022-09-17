@@ -10,18 +10,16 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class CurrencyHandler {
-    private CurrencyCalculator currCalc;
-    private DatabaseManager DBM;
-    private boolean isAdmin;
+    private final CurrencyCalculator currCalc;
+    private final DatabaseManager DBM;
 
     public CurrencyHandler(boolean admin) {
         this.currCalc = new CurrencyCalculator();
-        this.isAdmin = admin;
         this.DBM = new DatabaseManager("src/main/resources/database.json");
     }
 
-    public float convertCurrency(float amount, String currCurrency, String newCurrency) {
-        float rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
+    public double convertCurrency(float amount, String currCurrency, String newCurrency) {
+        double rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
 
         return rate * amount;
     }
@@ -37,13 +35,13 @@ public class CurrencyHandler {
                 if (i == j) {
                     display[i][j] = "-";
                 } else {
-                    float conversion = DBM.getConversion(fromCurrency, toCurrency);
+                    double conversion = DBM.getConversion(fromCurrency, toCurrency);
                     boolean upDirection = DBM.conversionIncreased(fromCurrency, toCurrency);
                     if (upDirection) {
-                        String data = String.format("{0} (↑)", conversion);
+                        String data = String.format("%f (↑)", conversion);
                         display[i][j] = data;
                     } else {
-                        String data = String.format("{0} (↓)", conversion);
+                        String data = String.format("%f (↓)", conversion);
                         display[i][j] = data;
                     }
                 }

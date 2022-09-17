@@ -5,13 +5,10 @@ import org.junit.jupiter.api.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.List;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import javax.xml.crypto.Data;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +20,7 @@ public class DatabaseTests {
 
     // Building a sample database for testing
     @BeforeAll
-    void buildSampleDatabase() {
+    static void buildSampleDatabase() {
         try {
             // Creating a database JSONObject
             JSONObject database = new JSONObject();
@@ -86,6 +83,8 @@ public class DatabaseTests {
             FileWriter writer = new FileWriter(file);
             writer.write(database.toJSONString());
 
+            writer.close();
+
             // // Setting the database to
             // this.database = database;
 
@@ -96,11 +95,11 @@ public class DatabaseTests {
 
     @Test
     void testGetConversion() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
-        assertEquals(dbm.getConversion("EUR", "AUD"), 1.468);
-        assertEquals(dbm.getConversion("AUD", "EUR"), 0.681);
-        assertEquals(dbm.getConversion("EUR", "USD"), 0.994);
+        assertEquals(Math.round(dbm.getConversion("EUR", "AUD") * 1000) / 1000.0, 1.477);
+        assertEquals(Math.round(dbm.getConversion("AUD", "EUR") * 1000) / 1000.0, 0.677);
+        assertEquals(Math.round(dbm.getConversion("EUR", "USD") * 1000) / 1000.0, 1.01);
 
         assertEquals(dbm.getConversion("EUR", "XRP"), 0);
         assertEquals(dbm.getConversion("XRP", "USD"), 0);
@@ -114,7 +113,7 @@ public class DatabaseTests {
 
     @Test
     void testGetPopularCurrencies() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         ArrayList<String> popular = new ArrayList<String>() {
             {
@@ -130,7 +129,7 @@ public class DatabaseTests {
 
     @Test
     void testAddPopularCurrencies() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         ArrayList<String> popular = new ArrayList<String>() {
             {
@@ -148,7 +147,7 @@ public class DatabaseTests {
 
     @Test
     void testConversionIncreased() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         assertTrue(dbm.conversionIncreased("AUD", "USD"));
         assertFalse(dbm.conversionIncreased("USD", "AUD"));
@@ -165,7 +164,7 @@ public class DatabaseTests {
 
     @Test
     void testCheckDate() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         assertEquals(dbm.checkDate("USD"), "10-09-2022");
         assertNull(dbm.checkDate("XRP"));
