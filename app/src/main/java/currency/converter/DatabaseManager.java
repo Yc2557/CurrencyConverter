@@ -34,21 +34,25 @@ public class DatabaseManager {
             // Extracting the rates array from the database
             JSONArray rates = (JSONArray) database.get("rates");
 
+            // Checking that currency exists
+            if (!currencyExists(fromCurr, rates) || !currencyExists(toCurr, rates)) {
+                return 0;
+            }
+
             if (fromCurr == "AUD") {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
-                // Taking the inverse because the rates are stored TO the AUD in the database
-                float rate = 1 / (float) currRateObject.get("rate");
+                float rate = (float) currRateObject.get("rate");
                 return rate;
             } else if (toCurr == "AUD") {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
-                // Taking the inverse because the rates are stored TO the AUD in the database
-                float rate = (float) currRateObject.get("rate");
+                // Taking the inverse because the rates are stored FROM the AUD in the database
+                float rate = 1 / (float) currRateObject.get("rate");
                 return rate;
 
             } else {
@@ -319,12 +323,17 @@ public class DatabaseManager {
         // Needs error checking return false;
     }
 
-    public boolean conversionIncreased(String fromCurr, String toCurr) {
+    public Boolean conversionIncreased(String fromCurr, String toCurr) {
         try {
             JSONParser jsonParser = new JSONParser();
             JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
 
             JSONArray rates = (JSONArray) database.get("rates");
+
+            // Checking that currency exists
+            if (!currencyExists(fromCurr, rates) || !currencyExists(toCurr, rates)) {
+                return null;
+            }
 
             if (fromCurr == "AUD") {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
@@ -338,10 +347,8 @@ public class DatabaseManager {
                 JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
                 JSONObject currObj2 = (JSONObject) currArray.get(currArray.size() - 2);
 
-                // Getting inverse of stored as it is database stores the values
-                // for every currency TO AUD
-                float rate1 = 1 / (float) currObj1.get("rate");
-                float rate2 = 1 / (float) currObj2.get("rate");
+                float rate1 = (float) currObj1.get("rate");
+                float rate2 = (float) currObj2.get("rate");
 
                 return rate1 - rate2 > 0;
 
@@ -357,8 +364,10 @@ public class DatabaseManager {
                 JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
                 JSONObject currObj2 = (JSONObject) currArray.get(currArray.size() - 2);
 
-                float rate1 = (float) currObj1.get("rate");
-                float rate2 = (float) currObj2.get("rate");
+                // Getting inverse of stored as it is database stores the values
+                // for every currency FROM AUD
+                float rate1 = 1 / (float) currObj1.get("rate");
+                float rate2 = 1 / (float) currObj2.get("rate");
 
                 return rate1 - rate2 > 0;
             } else {
@@ -371,7 +380,8 @@ public class DatabaseManager {
 
                 // Checking if there is historical data to compare to
                 if (toCurrArray.size() < 2 || fromCurrArray.size() < 2) {
-                    return false;
+                    System.out.println("There is not enough historical data to check.");
+                    return null;
                 }
 
                 JSONObject toCurrObj1 = (JSONObject) toCurrArray.get(toCurrArray.size() - 1);
@@ -400,6 +410,12 @@ public class DatabaseManager {
             JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
 
             JSONArray rates = (JSONArray) database.get("rates");
+
+            // Checking that currency exists
+            if (!currencyExists(curr, rates)) {
+                return null;
+            }
+
             JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr, rates));
             JSONArray currArray = (JSONArray) currObject.get("data");
             JSONObject currPresentRate = (JSONObject) currArray.get(currArray.size() - 1);
@@ -477,6 +493,21 @@ public class DatabaseManager {
 
         date = year + "-" + month + "-" + day;
         return date;
+    }
+
+    public static Boolean currencyExists(String curr, JSONArray rates) {
+        // Checking that currency exists
+        if (curr == "AUD") {
+            return true;
+        } else {
+            int currConvIndex = getConversionIndex(curr, rates);
+
+            if (currConvIndex == -1) {
+                System.out.println("Currency " + curr + " does not exist!");
+                return false;
+            }
+        }
+        return true;
     }
 
 }
