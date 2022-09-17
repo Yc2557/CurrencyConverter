@@ -107,7 +107,8 @@ public class DatabaseManager {
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate)) && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
+                            && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
                         Float actualRate = Float.parseFloat(rateTransform);
@@ -139,7 +140,8 @@ public class DatabaseManager {
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate)) && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
+                            && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
                         Float actualRate = Float.parseFloat(rateTransform);
@@ -159,7 +161,8 @@ public class DatabaseManager {
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate)) && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
+                            && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
                         String rateTransform = (String) dateAndRate.get("rate");
                         Float actualRate = Float.parseFloat(rateTransform);
@@ -267,7 +270,7 @@ public class DatabaseManager {
             JSONArray popular = (JSONArray) database.get("popular");
 
             ArrayList<String> list = new ArrayList<>();
-            //noinspection ForLoopReplaceableByForEach
+            // noinspection ForLoopReplaceableByForEach
             for (int i = 0; i < popular.size(); i++) {
                 list.add(popular.get(i).toString());
             }
