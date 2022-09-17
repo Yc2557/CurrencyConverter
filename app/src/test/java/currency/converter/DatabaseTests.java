@@ -1,10 +1,10 @@
 package currency.converter;
 
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
@@ -107,10 +107,16 @@ public class DatabaseTests {
     }
 
     @Test
-    void testAddCurrency() {
+    void testAddCurrency() throws IOException, ParseException {
         DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
+        JSONParser jsonParser = new JSONParser();
+        JSONObject database = (JSONObject) jsonParser.parse(new FileReader("src/main/resources/database.json"));
 
+        JSONArray rates = (JSONArray) database.get("rates");
+
+        dbm.addCurrency("NZD");
+        assertEquals(DatabaseManager.getConversionIndex("NZD", rates), 3); //NZD in index 3
     }
 
     @Test
@@ -118,10 +124,10 @@ public class DatabaseTests {
         DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
         ArrayList<String> popular = new ArrayList<String>() {{
-            add("USD");
-            add("EUR");
-            add("SGD");
-            add("JPY");
+            add("HKD");
+            add("GBP");
+            add("CHF");
+            add("KRW");
         }};
 
         assertEquals(dbm.getPopularCurrencies(), popular);
@@ -150,7 +156,7 @@ public class DatabaseTests {
         assertTrue(dbm.conversionIncreased("AUD", "USD"));
         assertFalse(dbm.conversionIncreased("USD", "AUD"));
 
-        assertTrue(dbm.conversionIncreased("USD", "EUR"));
+        assertTrue(dbm.conversionIncreased("EUR", "USD"));
         assertFalse(dbm.conversionIncreased("USD", "EUR"));
 
         // Not enough historical data

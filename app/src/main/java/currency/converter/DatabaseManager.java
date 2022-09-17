@@ -334,10 +334,10 @@ public class DatabaseManager {
                 JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
                 JSONObject currObj2 = (JSONObject) currArray.get(currArray.size() - 2);
 
-                float rate1 = (float) currObj1.get("rate");
-                float rate2 = (float) currObj2.get("rate");
+                double rate1 = (double) currObj1.get("rate");
+                double rate2 = (double) currObj2.get("rate");
 
-                return rate1 - rate2 > 0;
+                return (rate1 - rate2) > 0;
 
             } else if (toCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
@@ -353,16 +353,16 @@ public class DatabaseManager {
 
                 // Getting inverse of stored as it is database stores the values
                 // for every currency FROM AUD
-                float rate1 = 1 / (float) currObj1.get("rate");
-                float rate2 = 1 / (float) currObj2.get("rate");
+                double rate1 = 1 / (double) currObj1.get("rate");
+                double rate2 = 1 / (double) currObj2.get("rate");
 
-                return rate1 - rate2 > 0;
+                return (rate1 - rate2) > 0;
             } else {
                 // Get rate and check with previous
                 // Get inverse of stored
                 JSONObject toCurrObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray toCurrArray = (JSONArray) toCurrObject.get("data");
-                JSONObject fromCurrObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
+                JSONObject fromCurrObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray fromCurrArray = (JSONArray) fromCurrObject.get("data");
 
                 // Checking if there is historical data to compare to
@@ -376,10 +376,14 @@ public class DatabaseManager {
                 JSONObject fromCurrObj1 = (JSONObject) fromCurrArray.get(fromCurrArray.size() - 1);
                 JSONObject fromCurrObj2 = (JSONObject) fromCurrArray.get(fromCurrArray.size() - 2);
 
-                float rate1 = (float) toCurrObj1.get("rate") / (float) fromCurrObj1.get("rate");
-                float rate2 = (float) toCurrObj2.get("rate") / (float) fromCurrObj2.get("rate");
+                double rate1 = (double) toCurrObj1.get("rate") / (double) fromCurrObj1.get("rate");
+                double rate2 = (double) toCurrObj2.get("rate") / (double) fromCurrObj2.get("rate");
 
-                return rate1 - rate2 > 0;
+                System.out.println(rate1);
+                System.out.println(rate2);
+
+
+                return (rate1 - rate2) > 0;
             }
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
