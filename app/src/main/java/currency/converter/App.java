@@ -40,7 +40,7 @@ public class App {
                         String currCurrency = input_list[1];
                         String newCurrency = input_list[2];
                         float amount = Float.parseFloat(input_list[3]);
-                        float currency = handler.convertCurrency(amount, currCurrency, newCurrency);
+                        double currency = handler.convertCurrency(amount, currCurrency, newCurrency);
                         if (currency == 0) {
                             System.out.println("Invalid currrency inputted, please try again.");
                         } else {

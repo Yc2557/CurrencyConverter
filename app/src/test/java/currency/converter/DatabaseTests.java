@@ -107,7 +107,7 @@ public class DatabaseTests {
 
     @Test
     void testAddCurrency() {
-        DatabaseManager dbm = new DatabaseManager(true);
+        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
 
     }
 
