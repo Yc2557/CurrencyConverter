@@ -11,11 +11,12 @@ public class CurrencyCalculator {
         float powerSum2 = 0;
         float sd = 0;
 
-        for (int i = 0; i < list.size(); i++) {
-            powerSum1 += list.get(i);
-            powerSum2 += Math.pow(list.get(i), 2);
-            sd = (float) (Math.sqrt(i * powerSum2 - Math.pow(powerSum1, 2))/i);
+        for (Float aFloat : list) {
+            powerSum1 += aFloat;
+            powerSum2 += Math.pow(aFloat, 2);
         }
+
+        sd = (float) (Math.sqrt(list.size() * powerSum2 - Math.pow(powerSum1, 2))/list.size());
 
         return sd;
     }
