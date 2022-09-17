@@ -1,13 +1,9 @@
 package currency.converter;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.FileNotFoundException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,7 +18,7 @@ public class DatabaseManager {
         this.FILE_NAME = fileName;
     }
 
-    public float getConversion(String fromCurr, String toCurr) {
+    public double getConversion(String fromCurr, String toCurr) {
         try {
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
@@ -41,14 +37,14 @@ public class DatabaseManager {
                 JSONArray currData = (JSONArray) currObject.get("data");
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
-                return (float) currRateObject.get("rate");
+                return (double) currRateObject.get("rate");
             } else if (toCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
                 // Taking the inverse because the rates are stored FROM the AUD in the database
-                return 1 / (float) currRateObject.get("rate");
+                return (1 / (double) currRateObject.get("rate"));
 
             } else {
                 // Extracting the specific currency objects from the database
@@ -65,8 +61,8 @@ public class DatabaseManager {
                 JSONObject toCurrRateObject = (JSONObject) toCurrData.get(toCurrData.size() - 1);
 
                 // Extracting the most recent rates for each of the currencies
-                float rate1 = (float) fromCurrRateObject.get("rate");
-                float rate2 = (float) toCurrRateObject.get("rate");
+                double rate1 = (double) fromCurrRateObject.get("rate");
+                double rate2 = (double) toCurrRateObject.get("rate");
 
                 // Calculating & returning the finalised exchange rate between
                 // the two currencies (rate = to/from)
@@ -227,6 +223,11 @@ public class DatabaseManager {
 
             currArray.add(newCur);
 
+            FileWriter writer = new FileWriter(FILE_NAME);
+            writer.write(database.toJSONString());
+            writer.flush();
+            writer.close();
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             throw new RuntimeException(e);
@@ -251,6 +252,7 @@ public class DatabaseManager {
 
             FileWriter writer = new FileWriter(FILE_NAME);
             writer.write(database.toJSONString());
+            writer.flush();
             writer.close();
 
         } catch (IOException | ParseException e) {
@@ -261,7 +263,7 @@ public class DatabaseManager {
     public ArrayList<String> getPopularCurrencies() {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
             JSONArray popular = (JSONArray) database.get("popular");
 
             ArrayList<String> list = new ArrayList<>();
@@ -286,14 +288,18 @@ public class DatabaseManager {
     public boolean addPopularCurrencies(ArrayList<String> currencies) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
             JSONArray popular = new JSONArray();
 
-            for (String curr : currencies) {
-                popular.add(curr);
-            }
+            popular.addAll(currencies);
 
             database.put("popular", popular);
+
+            PrintWriter pw = new PrintWriter(FILE_NAME);
+            pw.write(database.toJSONString());
+
+            pw.flush();
+            pw.close();
 
             return true;
 
@@ -407,7 +413,8 @@ public class DatabaseManager {
     // Helper function to find the index of a rate object in the array
     public static int getConversionIndex(String curr, JSONArray array) {
         for (int i = 0; i < array.size(); i++) {
-            if (curr.equals(array.get(i))) {
+            JSONObject c = (JSONObject) array.get(i);
+            if (curr.equals(c.get("rate"))) {
                 return i;
             }
         }
