@@ -18,18 +18,18 @@ import org.json.simple.parser.*;
 
 public class DatabaseManager {
 
-    private boolean isAdmin;
+    private final String FILE_NAME;
     // private JSONParser jsonParser; <-- maybe?
 
-    public DatabaseManager(boolean isAdmin) {
-        this.isAdmin = isAdmin;
+    public DatabaseManager(String fileName) {
+        this.FILE_NAME = fileName;
     }
 
     public float getConversion(String fromCurr, String toCurr) {
         try {
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             // Extracting the rates array from the database
             JSONArray rates = (JSONArray) database.get("rates");
@@ -97,7 +97,7 @@ public class DatabaseManager {
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
 
             if (cur1.equals("AUD") || cur2.equals("AUD")) {
 
@@ -222,7 +222,7 @@ public class DatabaseManager {
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             // Get the rates array, relevant currency array
             JSONArray rates = (JSONArray) database.get("rates");
@@ -251,7 +251,7 @@ public class DatabaseManager {
     public void addCurrency(String curr) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
             JSONArray rates = (JSONArray) database.get("rates");
 
             // Creating the new currency object
@@ -278,7 +278,7 @@ public class DatabaseManager {
     public ArrayList<String> getPopularCurrencies() {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
             JSONArray popular = (JSONArray) database.get("popular");
 
             return (ArrayList<String>) popular;
@@ -301,7 +301,7 @@ public class DatabaseManager {
     public boolean addPopularCurrencies(ArrayList<String> currencies) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
             JSONArray popular = new JSONArray();
 
             for (String curr : currencies) {
@@ -326,7 +326,7 @@ public class DatabaseManager {
     public Boolean conversionIncreased(String fromCurr, String toCurr) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             JSONArray rates = (JSONArray) database.get("rates");
 
@@ -407,7 +407,7 @@ public class DatabaseManager {
     public String checkDate(String curr) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             JSONArray rates = (JSONArray) database.get("rates");
 

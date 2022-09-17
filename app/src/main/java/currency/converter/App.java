@@ -110,6 +110,7 @@ public class App {
                     exitFlag = true;
                     break;
                 case "help":
+                    System.out.println(System.getProperty("user.dir"));
                     DisplayTool.displayHelp();
                     break;
                 default:

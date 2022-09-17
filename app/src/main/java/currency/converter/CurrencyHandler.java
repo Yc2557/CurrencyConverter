@@ -12,10 +12,12 @@ import java.util.HashMap;
 public class CurrencyHandler {
     private CurrencyCalculator currCalc;
     private DatabaseManager DBM;
+    private boolean isAdmin;
 
     public CurrencyHandler(boolean admin) {
         this.currCalc = new CurrencyCalculator();
-        this.DBM = new DatabaseManager(admin);
+        this.isAdmin = admin;
+        this.DBM = new DatabaseManager("src/main/resources/database.json");
     }
 
     public float convertCurrency(float amount, String currCurrency, String newCurrency) {
@@ -78,7 +80,6 @@ public class CurrencyHandler {
     }
 
     public Map<String, Float> collateHistoryResults(Map<String, Float> currency, float amount) {
-
         // get list of rates from map
         List<Float> listOfRates = new ArrayList<>(currency.values());
 
