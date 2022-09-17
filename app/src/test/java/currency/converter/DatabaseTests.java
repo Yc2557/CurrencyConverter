@@ -115,7 +115,7 @@ public class DatabaseTests {
         JSONArray rates = (JSONArray) database.get("rates");
 
         dbm.addCurrency("NZD");
-        assertEquals(DatabaseManager.getConversionIndex("NZD", rates), 3); //NZD in index 3
+        assertEquals(3, DatabaseManager.getConversionIndex("NZD", rates)); //NZD in index 3
     }
 
     @Test
