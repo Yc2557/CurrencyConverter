@@ -16,7 +16,11 @@ public class App {
         Scanner sc = new Scanner(System.in);
         String input;
         boolean exitFlag = false;
-        boolean isAdmin = true;
+        boolean isAdmin = false;
+
+        if (args.length == 1) {
+            isAdmin = Objects.equals(args[0], "admin");
+        }
 
         // Set user to admin if command arg given
         CurrencyHandler handler = new CurrencyHandler(isAdmin);

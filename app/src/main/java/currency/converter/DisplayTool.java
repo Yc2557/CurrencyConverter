@@ -12,12 +12,17 @@ public class DisplayTool {
     }
 
     static void displayPopular(String[][] values, List<String> popularCurrencies) {
-        System.out.println("From/To\t" + popularCurrencies.get(0) + "\t" + popularCurrencies.get(1) + "\t"
-                + popularCurrencies.get(2) + "\t" + popularCurrencies.get(3));
+        System.out.println("From/To\t" + popularCurrencies.get(0) + "      " + popularCurrencies.get(1) + "      "
+                + popularCurrencies.get(2) + "      " + popularCurrencies.get(3));
         for (int i = 0; i < popularCurrencies.size(); i++) {
-            System.out.print(popularCurrencies.get(i) + "\t");
+            System.out.print(popularCurrencies.get(i) + " \t");
             for (int j = 0; j < popularCurrencies.size(); j++) {
-                System.out.print(values[i][j] + "\t");
+                if (values[i][j].equals("-")) {
+                    System.out.print(values[i][j] + "        ");
+                } else {
+                    System.out.print(values[i][j] + " ");
+                }
+
             }
             System.out.println();
         }

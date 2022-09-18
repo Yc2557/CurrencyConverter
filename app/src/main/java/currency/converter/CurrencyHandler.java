@@ -39,10 +39,10 @@ public class CurrencyHandler {
                     double conversion = DBM.getConversion(fromCurrency, toCurrency);
                     boolean upDirection = DBM.conversionIncreased(fromCurrency, toCurrency);
                     if (upDirection) {
-                        String data = String.format("%f (↑)", conversion);
+                        String data = String.format("%.2f (U)", conversion);
                         display[i][j] = data;
                     } else {
-                        String data = String.format("%f (↓)", conversion);
+                        String data = String.format("%.2f (D)", conversion);
                         display[i][j] = data;
                     }
                 }

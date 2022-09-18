@@ -5,10 +5,13 @@ package currency.converter;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import java.io.ByteArrayInputStream;
 
 class AppTest {
     @Test
-    void appHasAGreeting() {
-        App app = new App();
+    void appConvert() {
+        String userInput = "convert USD AUD 100";
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
+        String expected = "The conversion of 100.0 USD is: 133.0 AUD";
     }
 }
