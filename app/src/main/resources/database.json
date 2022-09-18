@@ -1,1 +1,58 @@
-{"rates":[{"data":[{"date":"01-09-2022","rate":0.677},{"date":"10-09-2022","rate":0.684}],"rate":"USD"},{"data":[{"date":"01-09-2022","rate":0.681},{"date":"10-09-2022","rate":0.677}],"rate":"EUR"},{"data":[{"date":"01-09-2022","rate":0.95}],"rate":"SGD"}],"popular":["HKD","GBP","CHF","KRW"],"base":"AUD"}
+{
+    "rates": [
+        {
+            "data": [
+                {
+                    "date": "01-09-2022",
+                    "rate": 0.677
+                },
+                {
+                    "date": "10-09-2022",
+                    "rate": 0.684
+                }
+            ],
+            "rate": "USD"
+        },
+        {
+            "data": [
+                {
+                    "date": "01-09-2022",
+                    "rate": 0.681
+                },
+                {
+                    "date": "10-09-2022",
+                    "rate": 0.677
+                }
+            ],
+            "rate": "EUR"
+        },
+        {
+            "data": [
+                {
+                    "date": "01-09-2022",
+                    "rate": 0.95
+                }
+            ],
+            "rate": "SGD"
+        },
+        {
+            "data": [],
+            "rate": "NZD"
+        },
+        {
+            "data": [],
+            "rate": "NZD"
+        },
+        {
+            "data": [],
+            "rate": "NZD"
+        }
+    ],
+    "popular": [
+        "HKD",
+        "GBP",
+        "CHF",
+        "KRW"
+    ],
+    "base": "AUD"
+}

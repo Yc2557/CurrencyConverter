@@ -9,3 +9,5 @@
 
 rootProject.name = 'currency-converter'
 include('app')
+include 'test'
+

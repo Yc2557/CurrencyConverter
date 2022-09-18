@@ -68,7 +68,11 @@ public class App {
                         String currCurrency = input_list[1];
                         String newCurrency = input_list[2];
                         float newRate = Float.parseFloat(input_list[3]);
-                        handler.updateCurrency(currCurrency, newCurrency, newRate, LocalDate.now());
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        String date = LocalDate.now().toString();
+                        System.out.println(date);
+                        LocalDate currentDate = LocalDate.parse(date, formatter);
+                        handler.updateCurrency(currCurrency, newCurrency, newRate, currentDate);
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
@@ -96,13 +100,13 @@ public class App {
                     break;
                 case "summary":
                     // Print out conversion history of two currencies
-                    if (input_list.length == 3) {
+                    if (input_list.length == 5) {
                         String currCurrency = input_list[1];
                         String newCurrency = input_list[2];
                         String start = input_list[3];
                         String end = input_list[4];
 
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-mm-yyyy");
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                         LocalDate startDate = LocalDate.parse(start, formatter);
                         LocalDate endDate = LocalDate.parse(end, formatter);
                         handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
