@@ -331,7 +331,7 @@ public class DatabaseManager {
 
                 // Checking if there is historical data to compare to
                 if (currArray.size() < 2) {
-                    return false;
+                    return true;
                 }
 
                 JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
@@ -348,7 +348,7 @@ public class DatabaseManager {
 
                 // Checking if there is historical data to compare to
                 if (currArray.size() < 2) {
-                    return false;
+                    return true;
                 }
 
                 JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
@@ -370,7 +370,7 @@ public class DatabaseManager {
 
                 // Checking if there is historical data to compare to
                 if (toCurrArray.size() < 2 || fromCurrArray.size() < 2) {
-                    return false;
+                    return true;
                 }
 
                 JSONObject toCurrObj1 = (JSONObject) toCurrArray.get(toCurrArray.size() - 1);
