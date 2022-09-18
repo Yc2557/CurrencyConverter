@@ -17,13 +17,22 @@ public class App {
         String input;
         boolean exitFlag = false;
         boolean isAdmin = false;
+        String filePath = "";
 
+        // Check command args for admin prompt and file path
         if (args.length == 1) {
             isAdmin = Objects.equals(args[0], "admin");
+        } else if (args.length == 2) {
+            filePath = args[1];
         }
 
+        CurrencyHandler handler;
         // Set user to admin if command arg given
-        CurrencyHandler handler = new CurrencyHandler(isAdmin, "app/src/main/resources/database.json");
+        if (args.length == 2) {
+            handler = new CurrencyHandler(isAdmin, filePath);
+        } else {
+            handler = new CurrencyHandler(isAdmin, "app/src/main/resources/database.json");
+        }
 
         // Print out entry message
         DisplayTool.displayTitle();
@@ -75,6 +84,7 @@ public class App {
                         String date = LocalDate.now().toString();
                         LocalDate currentDate = LocalDate.parse(date, formatter);
                         handler.updateCurrency(currCurrency, newCurrency, newRate, currentDate);
+                        System.out.println("Currency successfully updated.");
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
@@ -121,7 +131,6 @@ public class App {
                     exitFlag = true;
                     break;
                 case "help":
-                    System.out.println(System.getProperty("user.dir"));
                     DisplayTool.displayHelp();
                     break;
                 default:

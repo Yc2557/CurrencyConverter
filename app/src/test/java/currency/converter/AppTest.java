@@ -6,12 +6,67 @@ package currency.converter;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
 
 class AppTest {
     @Test
     void appConvert() {
-        String userInput = "convert USD AUD 100";
+        String userInput = "convert USD AUD 100\nexit";
         System.setIn(new ByteArrayInputStream(userInput.getBytes()));
-        String expected = "The conversion of 100.0 USD is: 133.0 AUD";
+
+        String expected = "The conversion of 100.00 USD is: 149.03 AUD";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[1];
+        args[0] = "test";
+        // args[1] = ""
+
+        App.main(args);
+        String[] lines = output.toString().split("\n");
+        String actual = lines[lines.length - 3];
+
+        assertEquals(expected, actual);
+
+        // Test for invalid currency and invalid arguments
+    }
+
+    @Test
+    void appDisplayMethods() {
+        // Test display
+        // Test summary method
+        // Test help method
+        String userInput = "help\nexit";
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
+
+        String expected = "help - displays this help menu";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[1];
+        args[0] = "test";
+
+        App.main(args);
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length - 3];
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void appUpdate() {
+
+    }
+
+    @Test
+    void appUpdatePopular() {
+
+    }
+
+    @Test
+    void appAdd() {
+
     }
 }
