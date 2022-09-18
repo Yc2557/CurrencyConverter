@@ -55,7 +55,7 @@ public class App {
                         float amount = Float.parseFloat(input_list[3]);
                         double currency = handler.convertCurrency(amount, currCurrency, newCurrency);
                         if (currency == 0) {
-                            System.out.println("Invalid currrency inputted, please try again.");
+                            System.out.println("Invalid currency inputted, please try again.");
                         } else {
                             System.out.format(
                                     "The conversion of %.2f %s is: %.2f %s\n", amount, currCurrency, currency,
@@ -68,8 +68,13 @@ public class App {
                 case "display":
                     // Displays popular results
                     String[][] values = handler.displayPopular();
-                    List<String> popularCurrencies = handler.getPopularCurrencies();
-                    DisplayTool.displayPopular(values, popularCurrencies);
+                    if (values == null) {
+                        System.out.println("Could not display due to lack of data!");
+                    } else {
+                        List<String> popularCurrencies = handler.getPopularCurrencies();
+                        DisplayTool.displayPopular(values, popularCurrencies);
+                    }
+
                     break;
                 case "update":
                     // Updates dataset

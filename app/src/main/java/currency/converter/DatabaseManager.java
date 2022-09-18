@@ -331,7 +331,7 @@ public class DatabaseManager {
 
                 // Checking if there is historical data to compare to
                 if (currArray.size() < 2) {
-                    return true;
+                    return null;
                 }
 
                 JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
@@ -348,7 +348,7 @@ public class DatabaseManager {
 
                 // Checking if there is historical data to compare to
                 if (currArray.size() < 2) {
-                    return true;
+                    return null;
                 }
 
                 JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
@@ -370,7 +370,7 @@ public class DatabaseManager {
 
                 // Checking if there is historical data to compare to
                 if (toCurrArray.size() < 2 || fromCurrArray.size() < 2) {
-                    return true;
+                    return null;
                 }
 
                 JSONObject toCurrObj1 = (JSONObject) toCurrArray.get(toCurrArray.size() - 1);
@@ -416,7 +416,7 @@ public class DatabaseManager {
     public static int getConversionIndex(String curr, JSONArray array) {
         for (int i = 0; i < array.size(); i++) {
             JSONObject c = (JSONObject) array.get(i);
-            if (curr.equals(c.get("rate"))) {
+            if (curr.equals(c.get("rate").toString())) {
                 return i;
             }
         }

@@ -24,6 +24,7 @@ public class CurrencyCalculator {
     private float calculateMean(List<Float> list) {
         float sum = 0;
 
+
         for (Float aFloat : list) {
             sum += aFloat;
         }
@@ -37,6 +38,10 @@ public class CurrencyCalculator {
         }
 
         Collections.sort(list);
+
+        if (list.size() == 0) {
+            return 0f;
+        }
 
         if (list.size() % 2 == 1) {
             return list.get((list.size() + 1)/2 - 1);
