@@ -16,7 +16,7 @@ public class CurrencyHandler {
 
     public CurrencyHandler(boolean admin) {
         this.currCalc = new CurrencyCalculator();
-        this.DBM = new DatabaseManager("src/main/resources/database.json");
+        this.DBM = new DatabaseManager("app/src/main/resources/database.json");
     }
 
     public double convertCurrency(float amount, String currCurrency, String newCurrency) {
@@ -37,7 +37,11 @@ public class CurrencyHandler {
                     display[i][j] = "-";
                 } else {
                     double conversion = DBM.getConversion(fromCurrency, toCurrency);
-                    boolean upDirection = DBM.conversionIncreased(fromCurrency, toCurrency);
+                    Boolean upDirection = DBM.conversionIncreased(fromCurrency, toCurrency);
+
+                    if (upDirection == null) {
+                        return null;
+                    }
                     if (upDirection) {
                         String data = String.format("%.2f (U)", conversion);
                         display[i][j] = data;

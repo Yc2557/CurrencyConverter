@@ -76,9 +76,19 @@ public class DatabaseTests {
             JSONObject SGD_rate = new JSONObject();
             SGD_rate.put("date", "01-09-2022");
             SGD_rate.put("rate", 0.950);
+
+            SGD_data.add(SGD_rate);
+
             SGD.put("data", SGD_data);
 
-            File file = new File("database.json");
+            //put all currencies into rate array
+            rates.add(USD);
+            rates.add(EUR);
+            rates.add(SGD);
+
+            database.put("rates", rates);
+
+            File file = new File("src/test/resources/databaseTest.json");
             file.createNewFile();
             FileWriter writer = new FileWriter(file);
             writer.write(database.toJSONString());
@@ -95,7 +105,7 @@ public class DatabaseTests {
 
     @Test
     void testGetConversion() {
-        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
+        DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
 
         assertEquals(Math.round(dbm.getConversion("EUR", "AUD") * 1000) / 1000.0, 1.477);
         assertEquals(Math.round(dbm.getConversion("AUD", "EUR") * 1000) / 1000.0, 0.677);
@@ -107,26 +117,28 @@ public class DatabaseTests {
 
     @Test
     void testAddCurrency() throws IOException, ParseException {
-        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
+        DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
+
+        dbm.addCurrency("NZD");
 
         JSONParser jsonParser = new JSONParser();
-        JSONObject database = (JSONObject) jsonParser.parse(new FileReader("src/main/resources/database.json"));
+        JSONObject database = (JSONObject) jsonParser.parse(new FileReader("src/test/resources/databaseTest.json"));
 
         JSONArray rates = (JSONArray) database.get("rates");
 
-        dbm.addCurrency("NZD");
+
         assertEquals(3, DatabaseManager.getConversionIndex("NZD", rates)); //NZD in index 3
     }
 
     @Test
     void testGetPopularCurrencies() {
-        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
+        DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
 
         ArrayList<String> popular = new ArrayList<String>() {{
-            add("HKD");
-            add("GBP");
-            add("CHF");
-            add("KRW");
+            add("USD");
+            add("EUR");
+            add("SGD");
+            add("JPY");
         }};
 
         assertEquals(dbm.getPopularCurrencies(), popular);
@@ -134,7 +146,7 @@ public class DatabaseTests {
 
     @Test
     void testAddPopularCurrencies() {
-        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
+        DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
 
         ArrayList<String> popular = new ArrayList<String>() {
             {
@@ -152,7 +164,7 @@ public class DatabaseTests {
 
     @Test
     void testConversionIncreased() {
-        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
+        DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
 
         assertTrue(dbm.conversionIncreased("AUD", "USD"));
         assertFalse(dbm.conversionIncreased("USD", "AUD"));
@@ -169,7 +181,7 @@ public class DatabaseTests {
 
     @Test
     void testCheckDate() {
-        DatabaseManager dbm = new DatabaseManager("src/main/resources/database.json");
+        DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
 
         assertEquals(dbm.checkDate("USD"), "10-09-2022");
         assertNull(dbm.checkDate("XRP"));
