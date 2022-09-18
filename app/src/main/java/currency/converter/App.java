@@ -17,13 +17,22 @@ public class App {
         String input;
         boolean exitFlag = false;
         boolean isAdmin = false;
+        String filePath = "";
 
+        // Check command args for admin prompt and file path
         if (args.length == 1) {
             isAdmin = Objects.equals(args[0], "admin");
+        } else if (args.length == 2) {
+            filePath = args[1];
         }
 
+        CurrencyHandler handler;
         // Set user to admin if command arg given
-        CurrencyHandler handler = new CurrencyHandler(isAdmin);
+        if (args.length == 2) {
+            handler = new CurrencyHandler(isAdmin, filePath);
+        } else {
+            handler = new CurrencyHandler(isAdmin);
+        }
 
         // Print out entry message
         DisplayTool.displayTitle();
@@ -48,9 +57,9 @@ public class App {
                         if (currency == 0) {
                             System.out.println("Invalid currrency inputted, please try again.");
                         } else {
-                            System.out.println(
-                                    "The conversion of " + amount + " " + currCurrency + " is: " + currency + " "
-                                            + newCurrency);
+                            System.out.format(
+                                    "The conversion of %.2f %s is: %.2f %s\n", amount, currCurrency, currency,
+                                    newCurrency);
                         }
                     } else {
                         System.out.println("Invalid number of arguments");
@@ -73,6 +82,7 @@ public class App {
                         System.out.println(date);
                         LocalDate currentDate = LocalDate.parse(date, formatter);
                         handler.updateCurrency(currCurrency, newCurrency, newRate, currentDate);
+                        System.out.println("Currency successfully updated.");
                     } else {
                         System.out.println("Invalid number of arguments");
                     }
@@ -119,7 +129,6 @@ public class App {
                     exitFlag = true;
                     break;
                 case "help":
-                    System.out.println(System.getProperty("user.dir"));
                     DisplayTool.displayHelp();
                     break;
                 default:

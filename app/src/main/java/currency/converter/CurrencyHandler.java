@@ -19,6 +19,11 @@ public class CurrencyHandler {
         this.DBM = new DatabaseManager("src/main/resources/database.json");
     }
 
+    public CurrencyHandler(boolean admin, String path) {
+        this.currCalc = new CurrencyCalculator();
+        this.DBM = new DatabaseManager(path);
+    }
+
     public double convertCurrency(float amount, String currCurrency, String newCurrency) {
         double rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
 
