@@ -370,8 +370,7 @@ public class DatabaseManager {
 
                 // Checking if there is historical data to compare to
                 if (toCurrArray.size() < 2 || fromCurrArray.size() < 2) {
-                    System.out.println("There is not enough historical data to check.");
-                    return null;
+                    return false;
                 }
 
                 JSONObject toCurrObj1 = (JSONObject) toCurrArray.get(toCurrArray.size() - 1);
@@ -381,10 +380,6 @@ public class DatabaseManager {
 
                 double rate1 = (double) toCurrObj1.get("rate") / (double) fromCurrObj1.get("rate");
                 double rate2 = (double) toCurrObj2.get("rate") / (double) fromCurrObj2.get("rate");
-
-                System.out.println(rate1);
-                System.out.println(rate2);
-
 
                 return (rate1 - rate2) > 0;
             }

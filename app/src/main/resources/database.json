@@ -1,4 +1,11 @@
 {
+    "base": "AUD",
+    "popular": [
+        "AUD",
+        "NZD",
+        "USD",
+        "EUR"
+    ],
     "rates": [
         {
             "data": [
@@ -36,23 +43,13 @@
             "rate": "SGD"
         },
         {
-            "data": [],
-            "rate": "NZD"
-        },
-        {
-            "data": [],
-            "rate": "NZD"
-        },
-        {
-            "data": [],
+            "data": [
+                {
+                    "date": "01-09-2022",
+                    "rate": 0.95
+                }
+            ],
             "rate": "NZD"
         }
-    ],
-    "popular": [
-        "HKD",
-        "GBP",
-        "CHF",
-        "KRW"
-    ],
-    "base": "AUD"
+    ]
 }
