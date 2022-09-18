@@ -107,13 +107,18 @@ public class DatabaseManager {
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
+
                     if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
                             && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
-                        String rateTransform = (String) dateAndRate.get("rate");
+                        String rateTransform = String.valueOf(dateAndRate.get("rate"));
                         Float actualRate = Float.parseFloat(rateTransform);
-                        pastRates.put(conversionDate, actualRate);
-
+                        if (cur1.equals("AUD")) {
+                            actualRate = 1/actualRate;
+                            pastRates.put(conversionDate, actualRate);
+                        } else {
+                            pastRates.put(conversionDate, actualRate);
+                        }
                     } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
                         break;
                     }
@@ -140,10 +145,11 @@ public class DatabaseManager {
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
+
                     if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
                             && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
-                        String rateTransform = (String) dateAndRate.get("rate");
+                        String rateTransform = String.valueOf(dateAndRate.get("rate"));
                         Float actualRate = Float.parseFloat(rateTransform);
                         currency1Map.put(conversionDate, actualRate);
 
@@ -154,6 +160,7 @@ public class DatabaseManager {
                 // Reuse vars
                 cur = (JSONObject) ratesArray.get(getConversionIndex(cur2, ratesArray));
                 currencyArray = (JSONArray) cur.get("data");
+
                 // fill hashmap for curr2
                 for (Object o : currencyArray) {
 
@@ -164,22 +171,13 @@ public class DatabaseManager {
                     if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
                             && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
-                        String rateTransform = (String) dateAndRate.get("rate");
+                        String rateTransform = String.valueOf(dateAndRate.get("rate"));
                         Float actualRate = Float.parseFloat(rateTransform);
-                        currency1Map.put(conversionDate, actualRate);
+                        currency2Map.put(conversionDate, actualRate);
 
                     } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
                         break;
                     }
-                }
-
-                // Pick the larger hashmap to work on
-                if (currency1Map.size() > currency2Map.size()) {
-                    ;
-                } else {
-                    HashMap<String, Float> tempMap = currency1Map;
-                    currency1Map = currency2Map;
-                    currency2Map = tempMap;
                 }
 
                 // For each entry in map 1, find any dates in map2 that are after that entry
@@ -188,13 +186,15 @@ public class DatabaseManager {
                     String key1 = entry.getKey();
                     Float value1 = entry.getValue();
 
+                    Float actualConversionRate = 0f;
                     for (Map.Entry<String, Float> map2 : currency2Map.entrySet()) {
                         String key2 = map2.getKey();
                         Float value2 = map2.getValue();
-                        if (!isBefore(key1, key2)) {
-                            value1 = value2 / value1;
+                        if (isBefore(key2, key1)) {
+                            actualConversionRate = value1 / value2;
                         }
                     }
+                    currency1Map.put(key1, actualConversionRate);
                 }
                 return currency1Map;
             }
@@ -456,13 +456,12 @@ public class DatabaseManager {
 
                 if (day1 > day2) {
                     return false;
-                } else if (day1 < day2) {
+                } else if (day1 <= day2) {
                     return true;
-                } else {
-                    return null;
                 }
             }
         }
+        return null;
     }
 
     public static Integer dateToInt(String d) {

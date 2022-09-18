@@ -66,7 +66,6 @@ public class App {
                         float newRate = Float.parseFloat(input_list[3]);
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                         String date = LocalDate.now().toString();
-                        System.out.println(date);
                         LocalDate currentDate = LocalDate.parse(date, formatter);
                         handler.updateCurrency(currCurrency, newCurrency, newRate, currentDate);
                     } else {
