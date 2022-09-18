@@ -32,6 +32,10 @@ public class CurrencyCalculator {
     }
 
     private float calculateMedian(List<Float> list) {
+        if (list.size() == 0) {
+            return 0f;
+        }
+
         Collections.sort(list);
 
         if (list.size() % 2 == 1) {
