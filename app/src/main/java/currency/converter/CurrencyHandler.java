@@ -14,9 +14,9 @@ public class CurrencyHandler {
     private final CurrencyCalculator currCalc;
     private final DatabaseManager DBM;
 
-    public CurrencyHandler(boolean admin) {
+    public CurrencyHandler(boolean admin, String filename) {
         this.currCalc = new CurrencyCalculator();
-        this.DBM = new DatabaseManager("app/src/main/resources/database.json");
+        this.DBM = new DatabaseManager(filename);
     }
 
     public double convertCurrency(float amount, String currCurrency, String newCurrency) {
@@ -40,9 +40,9 @@ public class CurrencyHandler {
                     Boolean upDirection = DBM.conversionIncreased(fromCurrency, toCurrency);
 
                     if (upDirection == null) {
-                        return null;
+                        display[i][j] = "-";
                     }
-                    if (upDirection) {
+                    if (Boolean.TRUE.equals(upDirection)) {
                         String data = String.format("%.2f (U)", conversion);
                         display[i][j] = data;
                     } else {
@@ -69,11 +69,7 @@ public class CurrencyHandler {
                 add(curr4);
             }
         };
-        if (DBM.addPopularCurrencies(currencies)) {
-            return true;
-        } else {
-            return false;
-        }
+        return DBM.addPopularCurrencies(currencies);
     }
 
     public Boolean addCurrency(String currency) {
@@ -90,20 +86,20 @@ public class CurrencyHandler {
         return currCalc.calculateStatistic(listOfRates);
     }
 
-    public void updateCurrency(String curr1, String curr2, float newRate, LocalDate date) {
-        if (!curr1.equals("AUD") && !curr2.equals("AUD")) {
+    public boolean updateCurrency(String fromCurr, String toCurr, float newRate, LocalDate date) {
+        if (!fromCurr.equals("AUD") && !toCurr.equals("AUD")) { //one currency must be AUD
             System.out.println("At least one currency must be AUD!");
-            return;
+            return false;
         }
 
         int currNum = 0;
         String recentDate;
-        if (curr1.equals("AUD")) {
+        if (fromCurr.equals("AUD")) { //
             currNum = 2;
-            recentDate = DBM.checkDate(curr2);
+            recentDate = DBM.checkDate(toCurr);
         } else {
             currNum = 1;
-            recentDate = DBM.checkDate(curr1);
+            recentDate = DBM.checkDate(fromCurr);
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -111,11 +107,13 @@ public class CurrencyHandler {
 
         if (!recentDate.equals(date.toString())) {
             if (currNum == 1) {
-                DBM.addConversion(curr1, newRate, dateFormatted);
+                DBM.addConversion(fromCurr, 1/newRate, dateFormatted);
             } else {
-                DBM.addConversion(curr2, newRate, dateFormatted);
+                DBM.addConversion(toCurr, newRate, dateFormatted);
             }
         }
+
+        return true;
     }
 
     public void printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {

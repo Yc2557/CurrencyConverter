@@ -1,17 +1,133 @@
 package currency.converter;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CurrencyHandlerTests {
-    private final CurrencyHandler currencyHandler = new CurrencyHandler(true);
+    private final CurrencyHandler currencyHandler = new CurrencyHandler(true, "src/test/resources/CurrencyHandlerTest.json");
+
+    // Building a sample database for testing
+    @BeforeAll
+    static void buildSampleDatabase() {
+        try {
+            // Creating a database JSONObject
+            JSONObject database = new JSONObject();
+            database.put("base", "AUD");
+
+            // Creating the popular currency JSONArray
+            JSONArray popular = new JSONArray();
+            popular.add("USD");
+            popular.add("EUR");
+            popular.add("SGD");
+            popular.add("JPY");
+            database.put("popular", popular);
+
+            // Adding rate objects for USD, EUR and SGD
+            JSONArray rates = new JSONArray();
+
+            // USD
+            JSONObject USD = new JSONObject();
+            USD.put("rate", "USD");
+            JSONArray USD_data = new JSONArray();
+            JSONObject USD_rate1 = new JSONObject();
+            USD_rate1.put("date", "01-09-2022");
+            USD_rate1.put("rate", 0.677);
+            JSONObject USD_rate2 = new JSONObject();
+            USD_rate2.put("date", "10-09-2022");
+            USD_rate2.put("rate", 0.684);
+
+            USD_data.add(USD_rate1);
+            USD_data.add(USD_rate2);
+
+            USD.put("data", USD_data);
+
+            // EUR
+            JSONObject EUR = new JSONObject();
+            EUR.put("rate", "EUR");
+            JSONArray EUR_data = new JSONArray();
+            JSONObject EUR_rate1 = new JSONObject();
+            EUR_rate1.put("date", "01-09-2022");
+            EUR_rate1.put("rate", 0.681);
+            JSONObject EUR_rate2 = new JSONObject();
+            EUR_rate2.put("date", "10-09-2022");
+            EUR_rate2.put("rate", 0.677);
+
+            EUR_data.add(EUR_rate1);
+            EUR_data.add(EUR_rate2);
+
+            EUR.put("data", EUR_data);
+
+            // SGD
+            JSONObject SGD = new JSONObject();
+            SGD.put("rate", "SGD");
+            JSONArray SGD_data = new JSONArray();
+            JSONObject SGD_rate = new JSONObject();
+            SGD_rate.put("date", "01-09-2022");
+            SGD_rate.put("rate", 0.950);
+
+            SGD_data.add(SGD_rate);
+
+            SGD.put("data", SGD_data);
+
+            //put all currencies into rate array
+            rates.add(USD);
+            rates.add(EUR);
+            rates.add(SGD);
+
+            database.put("rates", rates);
+
+            File file = new File("src/test/resources/CurrencyHandlerTest.json");
+            file.createNewFile();
+            FileWriter writer = new FileWriter(file);
+            writer.write(database.toJSONString());
+
+            writer.close();
+
+            // // Setting the database to
+            // this.database = database;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
-    public void convertCurrencyTest() {
-        //assertEquals();
+    public void displayPopularTest() {
+
+        String[][] result = currencyHandler.displayPopular();
+
+
+        assertEquals("-", result[0][0]);
+        assertEquals("-", result[1][1]);
+        assertEquals("0.99 (D)", result[0][1]);
+        assertEquals("0.00 (D)", result[0][3]);
+        assertEquals("0.71 (D)", result[2][1]);
+
+    }
+
+    @Test
+    public void addCurrencyTest() {
+        boolean result = currencyHandler.addCurrency("NZD");
+        assertTrue(result);
+    }
+
+    //collateHistoryResults tests are done in CalculatorTests
+
+    @Test
+    public void updateConversionTest() { //to from???
+        assertFalse(currencyHandler.updateCurrency("USD", "SGD", 1.5f, LocalDate.now()));
+        assertTrue(currencyHandler.updateCurrency("USD", "AUD", 1.5f, LocalDate.now()));
+
+
+        assertEquals(150.00, Math.round(currencyHandler.convertCurrency(100, "USD", "AUD")* 1000) / 1000.0);
     }
 
 }

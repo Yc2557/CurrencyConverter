@@ -23,7 +23,7 @@ public class App {
         }
 
         // Set user to admin if command arg given
-        CurrencyHandler handler = new CurrencyHandler(isAdmin);
+        CurrencyHandler handler = new CurrencyHandler(isAdmin, "app/src/main/resources/database.json");
 
         // Print out entry message
         DisplayTool.displayTitle();
