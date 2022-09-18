@@ -2,6 +2,7 @@ package currency.converter;
 
 import java.util.List;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.util.Map.Entry;
@@ -86,10 +87,30 @@ public class CurrencyHandler {
     }
 
     public void updateCurrency(String curr1, String curr2, float newRate, LocalDate date) {
-        String recentDate = DBM.checkDate(curr1);
+        if (!curr1.equals("AUD") && !curr2.equals("AUD")) {
+            System.out.println("At least one currency must be AUD!");
+            return;
+        }
+
+        int currNum = 0;
+        String recentDate;
+        if (curr1.equals("AUD")) {
+            currNum = 2;
+            recentDate = DBM.checkDate(curr2);
+        } else {
+            currNum = 1;
+            recentDate = DBM.checkDate(curr1);
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String dateFormatted = date.format(formatter);
+
         if (!recentDate.equals(date.toString())) {
-            // can convert date to a string if needed, left as LocalDate
-            DBM.addConversion(curr1, curr2, newRate, date.toString()); // Made this for testing
+            if (currNum == 1) {
+                DBM.addConversion(curr1, newRate, dateFormatted);
+            } else {
+                DBM.addConversion(curr2, newRate, dateFormatted);
+            }
         }
     }
 

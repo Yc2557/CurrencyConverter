@@ -86,7 +86,7 @@ public class DatabaseManager {
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             if (cur1.equals("AUD") || cur2.equals("AUD")) {
 
@@ -206,7 +206,7 @@ public class DatabaseManager {
         return pastRates;
     }
 
-    public void addConversion(String curr1, String curr2, float amount, String date) {
+    public void addConversion(String curr, float amount, String date) {
 
         try {
             JSONParser jsonParser = new JSONParser();
@@ -214,7 +214,7 @@ public class DatabaseManager {
 
             // Get the rates array, relevant currency array
             JSONArray rates = (JSONArray) database.get("rates");
-            JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr1, rates));
+            JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr, rates));
 
             // Get the date:rate array from that currency
             JSONArray currArray = (JSONArray) currObject.get("data");
@@ -242,7 +242,7 @@ public class DatabaseManager {
     public void addCurrency(String curr) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader(FILE_NAME)));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
             JSONArray rates = (JSONArray) database.get("rates");
 
             // Creating the new currency object
