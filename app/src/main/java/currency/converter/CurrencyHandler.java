@@ -119,16 +119,22 @@ public class CurrencyHandler {
     }
 
     public void printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
-        HashMap<String, Float> conversionRates = DBM.getPastConversion(curr1, curr2, startDate.toString(),
-                endDate.toString());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String startDateFormatted = startDate.format(formatter);
+        String endDateFormatted = endDate.format(formatter);
+
+        HashMap<String, Float> conversionRates = DBM.getPastConversion(curr1, curr2, startDateFormatted,
+                endDateFormatted);
 
         List<Float> listOfRates = new ArrayList<>(conversionRates.values());
         Map<String, Float> statMap = currCalc.calculateStatistic(listOfRates);
 
-        System.out.println("Conversion Rate History of " + curr1 + " to " + curr2);
+        System.out.println("\nConversion Rate History of " + curr1 + " to " + curr2);
         for (String key : conversionRates.keySet()) {
             System.out.println(key + ": " + conversionRates.get(key));
         }
+        System.out.println("");
 
         System.out.println("Statistics");
         for (String key : statMap.keySet()) {
