@@ -58,6 +58,6 @@
             <Font size="14.0" />
          </font>
       </Text>
-      <Button fx:id="backButton" layoutX="525.0" layoutY="352.0" mnemonicParsing="false" onAction="#backAction" prefHeight="26.0" prefWidth="54.0" text="Back" />
+      <Button fx:id="backButton" layoutX="507.0" layoutY="352.0" mnemonicParsing="false" onAction="#backAction" prefHeight="26.0" prefWidth="52.0" text="Back" />
    </children>
 </AnchorPane>

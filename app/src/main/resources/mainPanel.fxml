@@ -15,7 +15,7 @@
       <Button fx:id="convertCurrencyButton" layoutX="46.0" layoutY="133.0" mnemonicParsing="false" onAction="#convertButtonAction" prefHeight="26.0" prefWidth="168.0" text="Convert Currency" />
       <Button fx:id="getSummaryButton" layoutX="46.0" layoutY="175.0" mnemonicParsing="false" onAction="#summaryButtonAction" prefHeight="26.0" prefWidth="168.0" text="Get Summary" />
       <Button fx:id="adminPanelButton" disable="true" layoutX="46.0" layoutY="255.0" mnemonicParsing="false" onAction="#adminButtonAction" prefHeight="26.0" prefWidth="168.0" text="Admin Panel" />
-      <Button fx:id="backButton" layoutX="511.0" layoutY="348.0" mnemonicParsing="false" onAction="#backAction" text="Back" />
+      <Button fx:id="backButton" layoutX="507.0" layoutY="352.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#backAction" prefHeight="26.0" prefWidth="52.0" text="Back" />
       <Button fx:id="viewPopularButton" layoutX="46.0" layoutY="216.0" mnemonicParsing="false" onAction="#displayButtonAction" prefHeight="26.0" prefWidth="168.0" text="View Popular" />
    </children>
 </AnchorPane>

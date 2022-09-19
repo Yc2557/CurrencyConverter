@@ -42,7 +42,7 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <Button fx:id="backButton" layoutX="532.0" layoutY="360.0" mnemonicParsing="false" onAction="#backAction" text="Back" />
+      <Button fx:id="backButton" layoutX="507.0" layoutY="352.0" mnemonicParsing="false" onAction="#backAction" prefHeight="26.0" prefWidth="52.0" text="Back" />
       <ComboBox fx:id="popularNumChoice1" layoutX="35.0" layoutY="289.0" onContextMenuRequested="#popularNumChoice1Action" onMouseClicked="#popularNumChoice1Action" prefHeight="26.0" prefWidth="83.0" />
       <ComboBox fx:id="popularNumChoice2" layoutX="129.0" layoutY="289.0" onContextMenuRequested="#popularNumChoice2Action" onMouseClicked="#popularNumChoice2Action" prefHeight="26.0" prefWidth="83.0" />
       <ComboBox fx:id="popularNumChoice3" layoutX="34.0" layoutY="323.0" onContextMenuRequested="#popularNumChoice3Action" onMouseClicked="#popularNumChoice3Action" prefHeight="26.0" prefWidth="83.0" />
