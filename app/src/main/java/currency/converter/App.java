@@ -122,9 +122,6 @@ public class App {
                         LocalDate startDate = LocalDate.parse(start, formatter);
                         LocalDate endDate = LocalDate.parse(end, formatter);
                         boolean bool = handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
-                        if (bool) {
-                            System.out.println("\nHistory successfully printed.");
-                        }
                     }
                     break;
                 case "exit":

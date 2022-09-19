@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -127,8 +128,10 @@ public class CurrencyHandlerTests {
 
     @Test
     public void addCurrencyTest() {
-        boolean result = currencyHandler.addCurrency("NZD");
-        assertTrue(result);
+        boolean result1 = currencyHandler.addCurrency("NZD");
+        assertTrue(result1);
+        boolean result2 = currencyHandler.addCurrency("NZD");
+        assertFalse(result2);
     }
 
     //collateHistoryResults tests are done in CalculatorTests
@@ -165,5 +168,18 @@ public class CurrencyHandlerTests {
     public void updatePopularTest() {
         assertTrue(currencyHandler.updatePopular("USD", "JPY", "SGD", "EUR"));
         assertFalse(currencyHandler.updatePopular("USD", "JPY", "SGD", "ABD"));
+    }
+
+    @Test
+    public void printConversionHistoryTest() {
+        String start = "01-09-2022";
+        String end = "03-09-2022";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate startDate = LocalDate.parse(start, formatter);
+        LocalDate endDate = LocalDate.parse(end, formatter);
+
+        assertTrue(currencyHandler.printConversionHistory("AUD","SGD",startDate, endDate));
+        assertFalse(currencyHandler.printConversionHistory("ASD","SGD",startDate, endDate));
     }
 }

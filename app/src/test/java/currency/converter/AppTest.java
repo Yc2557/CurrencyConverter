@@ -217,7 +217,7 @@ class AppTest {
         String userInput = "summary AUD USD 01-09-2022 10-09-2022\nexit";
         System.setIn(new ByteArrayInputStream(userInput.getBytes()));
 
-        String expected = "max: 1.4771049";
+        String expected = "max: 0.684";
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         PrintStream pStream = new PrintStream(output);
         System.setOut(pStream);
