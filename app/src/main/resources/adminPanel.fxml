@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -27,25 +27,30 @@
             <Font size="14.0" />
          </font>
       </Text>
-      <ChoiceBox fx:id="fromCurrencyChoice" layoutX="37.0" layoutY="182.0" prefHeight="26.0" prefWidth="59.0" />
-      <Text layoutX="105.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To" />
-      <ChoiceBox fx:id="toCurrencyChoice" layoutX="127.0" layoutY="182.0" prefHeight="26.0" prefWidth="59.0" />
+      <Text layoutX="129.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To" />
       <TextField fx:id="updateRateText" layoutX="37.0" layoutY="217.0" prefHeight="26.0" prefWidth="122.0" />
       <Button fx:id="updateRateButton" layoutX="174.0" layoutY="217.0" mnemonicParsing="false" onAction="#updateRateAction" text="Update" />
-      <Text layoutX="40.0" layoutY="299.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Popular">
+      <Text layoutX="37.0" layoutY="278.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Popular">
          <font>
             <Font size="14.0" />
          </font>
       </Text>
-      <ChoiceBox fx:id="popularNumChoice" layoutX="37.0" layoutY="309.0" prefHeight="26.0" prefWidth="59.0" />
-      <ChoiceBox fx:id="changeToChoice" layoutX="109.0" layoutY="309.0" prefHeight="26.0" prefWidth="59.0" />
-      <Button fx:id="changePopularButton" layoutX="174.0" layoutY="309.0" mnemonicParsing="false" text="Change" />
-      <ListView layoutX="320.0" layoutY="1.0" prefHeight="400.0" prefWidth="280.0" />
-      <Text layoutX="363.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Most Popular Currencies">
+      <Button fx:id="changePopularButton" layoutX="229.0" layoutY="302.0" mnemonicParsing="false" onAction="#updatePopularAction" text="Change" />
+      <ListView fx:id="popularList" layoutX="305.0" layoutY="108.0" prefHeight="157.0" prefWidth="280.0" />
+      <Text layoutX="337.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Most Popular Currencies">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
       <Button fx:id="backButton" layoutX="532.0" layoutY="360.0" mnemonicParsing="false" onAction="#backAction" text="Back" />
+      <ComboBox fx:id="popularNumChoice1" layoutX="35.0" layoutY="289.0" onContextMenuRequested="#popularNumChoice1Action" onMouseClicked="#popularNumChoice1Action" prefHeight="26.0" prefWidth="83.0" />
+      <ComboBox fx:id="popularNumChoice2" layoutX="129.0" layoutY="289.0" onContextMenuRequested="#popularNumChoice2Action" onMouseClicked="#popularNumChoice2Action" prefHeight="26.0" prefWidth="83.0" />
+      <ComboBox fx:id="popularNumChoice3" layoutX="34.0" layoutY="323.0" onContextMenuRequested="#popularNumChoice3Action" onMouseClicked="#popularNumChoice3Action" prefHeight="26.0" prefWidth="83.0" />
+      <ComboBox fx:id="popularNumChoice4" layoutX="129.0" layoutY="323.0" onContextMenuRequested="#popularNumChoice4Action" onMouseClicked="#popularNumChoice4Action" prefHeight="26.0" prefWidth="83.0" />
+      <ComboBox fx:id="fromCurrencyChoice" layoutX="37.0" layoutY="182.0" onContextMenuRequested="#populateFromCurrencyChoice" onMouseClicked="#populateFromCurrencyChoice" prefHeight="26.0" prefWidth="83.0" />
+      <ComboBox fx:id="toCurrencyChoice" layoutX="151.0" layoutY="182.0" onContextMenuRequested="#populatetoCurrencyChoice" onMouseClicked="#populatetoCurrencyChoice" prefHeight="26.0" prefWidth="83.0" />
+      <Text fx:id="updateRateResult" layoutX="38.0" layoutY="256.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="194.6513671875" />
+      <Text fx:id="changePopularText" fill="RED" layoutX="38.0" layoutY="364.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="194.6513671875" />
+      <Text fx:id="addCurrencyResult" layoutX="31.0" layoutY="148.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="194.6513671875" />
    </children>
 </AnchorPane>

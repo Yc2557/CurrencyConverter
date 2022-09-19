@@ -8,13 +8,25 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="currency.converter.LoginController">
    <children>
-      <TextField fx:id="loginText" layoutX="123.0" layoutY="174.0" prefHeight="26.0" prefWidth="306.0" />
-      <Text layoutX="123.0" layoutY="161.0" strokeType="OUTSIDE" strokeWidth="0.0" text="User Mode">
+      <TextField fx:id="loginText" layoutX="118.0" layoutY="150.0" prefHeight="26.0" prefWidth="306.0" />
+      <Text layoutX="118.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="User Mode">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <Button fx:id="loginButton" layoutX="393.0" layoutY="232.0" mnemonicParsing="false" onAction="#loginButtonAction" prefHeight="26.0" prefWidth="71.0" text="Login" />
-      <Text fx:id="invalidMessage" fill="RED" layoutX="123.0" layoutY="221.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="306.39999999999986" />
+      <Button fx:id="loginButton" layoutX="393.0" layoutY="187.0" mnemonicParsing="false" onAction="#loginButtonAction" prefHeight="26.0" prefWidth="71.0" text="Login" />
+      <Text fx:id="invalidMessage" fill="RED" layoutX="118.0" layoutY="197.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="306.39999999999986" />
+      <TextField fx:id="filePathText" layoutX="173.0" layoutY="264.0" prefHeight="26.0" prefWidth="205.0" promptText="If not set then default is used" />
+      <Text layoutX="118.0" layoutY="282.0" strokeType="OUTSIDE" strokeWidth="0.0" text="File Path">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Text>
+      <Button fx:id="setFilePathButton" layoutX="393.0" layoutY="264.0" mnemonicParsing="false" onAction="#setFilePathAction" prefHeight="26.0" prefWidth="71.0" text="Set" />
+      <Text fx:id="invalidPathText" fill="RED" layoutX="186.0" layoutY="304.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="178.2611083984375">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

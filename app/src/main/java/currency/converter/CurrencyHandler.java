@@ -19,6 +19,10 @@ public class CurrencyHandler {
         this.DBM = new DatabaseManager(filename);
     }
 
+    public List<String> getCurrencies() {
+        return DBM.getCurrencies();
+    }
+
     public double convertCurrency(float amount, String currCurrency, String newCurrency) {
         double rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
 
@@ -116,7 +120,7 @@ public class CurrencyHandler {
         return true;
     }
 
-    public boolean printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
+    public HashMap<String, Float> printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String startDateFormatted = startDate.format(formatter);
@@ -126,7 +130,7 @@ public class CurrencyHandler {
                 endDateFormatted);
 
         if (conversionRates == null) {
-            return false;
+            return null;
         }
 
         List<Float> listOfRates = new ArrayList<>(conversionRates.values());
@@ -142,6 +146,6 @@ public class CurrencyHandler {
         for (String key : statMap.keySet()) {
             System.out.println(key + ": " + statMap.get(key));
         }
-        return true;
+        return conversionRates;
     }
 }

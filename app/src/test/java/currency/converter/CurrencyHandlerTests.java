@@ -179,7 +179,7 @@ public class CurrencyHandlerTests {
         LocalDate startDate = LocalDate.parse(start, formatter);
         LocalDate endDate = LocalDate.parse(end, formatter);
 
-        assertTrue(currencyHandler.printConversionHistory("AUD","SGD",startDate, endDate));
-        assertFalse(currencyHandler.printConversionHistory("ASD","SGD",startDate, endDate));
+        assertNotNull(currencyHandler.printConversionHistory("AUD","SGD",startDate, endDate));
+        assertNull(currencyHandler.printConversionHistory("ASD","SGD",startDate, endDate));
     }
 }
