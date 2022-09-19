@@ -4,7 +4,7 @@
 Java-based basic command-line currency converter. The converter enables users to convert between currencies, add/update currencies and conversions in a database, and display popular currencies and transaction histories. Data persists between loads, and is stored in a .json file.
 
 ## Use Notes
-To run the program, use the following (add square brackets if running in admin mode);
+To run the program, use the following (add code inside square brackets if running in admin mode);
 ```
 gradle run [--args=”admin”]
 ```
@@ -25,7 +25,7 @@ The program accepts the following commands:
 - update [curr1] [curr2] [new-rate] - updates the currency conversion from curr1 to curr2 with new-rate. Note: one of the currencies must be the base currency “AUD”.
 - update-popular [curr1] [curr2] [curr3] [curr4] - updates the current popular currencies to the four user inputs
 - add [curr1] - adds a new exchange rate
-- summary [curr1] [curr2] [start-date] [end-date] - displays the conversion history of curr1 to curr2, with date given in dd/mm/yyyy format.
+- summary [curr1] [curr2] [start-date] [end-date] - displays the conversion history of curr1 to curr2, with date given in dd-mm-yyyy format.
 - exit - exits the program
 - help - displays this help menu
 
