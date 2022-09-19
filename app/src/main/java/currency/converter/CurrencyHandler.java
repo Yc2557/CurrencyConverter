@@ -72,10 +72,10 @@ public class CurrencyHandler {
         return DBM.addPopularCurrencies(currencies);
     }
 
-    public Boolean addCurrency(String currency) {
-        this.DBM.addCurrency(currency); // add new currency to the json
+    public boolean addCurrency(String currency) {
+        boolean bool = this.DBM.addCurrency(currency); // add new currency to the json
 
-        return Boolean.TRUE;
+        return bool;
     }
 
     public Map<String, Float> collateHistoryResults(Map<String, Float> currency, float amount) {
@@ -116,7 +116,7 @@ public class CurrencyHandler {
         return true;
     }
 
-    public void printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
+    public boolean printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String startDateFormatted = startDate.format(formatter);
@@ -124,6 +124,10 @@ public class CurrencyHandler {
 
         HashMap<String, Float> conversionRates = DBM.getPastConversion(curr1, curr2, startDateFormatted,
                 endDateFormatted);
+
+        if (conversionRates == null) {
+            return false;
+        }
 
         List<Float> listOfRates = new ArrayList<>(conversionRates.values());
         Map<String, Float> statMap = currCalc.calculateStatistic(listOfRates);
@@ -138,5 +142,6 @@ public class CurrencyHandler {
         for (String key : statMap.keySet()) {
             System.out.println(key + ": " + statMap.get(key));
         }
+        return true;
     }
 }

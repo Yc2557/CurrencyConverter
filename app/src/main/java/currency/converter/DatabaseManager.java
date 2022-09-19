@@ -102,6 +102,27 @@ public class DatabaseManager {
         try {
             JSONParser jsonParser = new JSONParser();
             JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
+            JSONArray rates = (JSONArray) database.get("rates");
+
+            boolean currency1Exists = false;
+            boolean currency2Exists = false;
+
+            for (int i = 0; i < rates.size(); i++) {
+                JSONObject rate = (JSONObject) rates.get(i);
+                if (cur1.equals(rate.get("rate"))) {
+                    currency1Exists = true;
+                } else if (cur2.equals(rate.get("rate"))) {
+                    currency2Exists = true;
+                }
+            }
+
+            if (!currency1Exists && !cur1.equals("AUD")) {
+                System.out.println(cur1 + " doesn't exist in the database.\n");
+                return null;
+            } else if (!currency2Exists && !cur2.equals("AUD")) {
+                System.out.println(cur2 + " doesn't exist in the database.\n");
+                return null;
+            }
 
             if (cur1.equals("AUD") || cur2.equals("AUD")) {
 
@@ -254,11 +275,24 @@ public class DatabaseManager {
         }
     }
 
-    public void addCurrency(String curr) {
+    public boolean addCurrency(String curr) {
         try {
             JSONParser jsonParser = new JSONParser();
             JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
             JSONArray rates = (JSONArray) database.get("rates");
+
+            boolean currencyExists = false;
+            for (int i = 0; i < rates.size(); i++) {
+                JSONObject rate = (JSONObject) rates.get(i);
+                if (curr.equals(rate.get("rate"))) {
+                    currencyExists = true;
+                }
+            }
+
+            if (currencyExists || curr.equals("AUD")) {
+                System.out.println("Currency already exists in the database.");
+                return false;
+            }
 
             // Creating the new currency object
             JSONObject currency = new JSONObject();
@@ -272,6 +306,7 @@ public class DatabaseManager {
             writer.write(database.toJSONString());
             writer.flush();
             writer.close();
+            return true;
 
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);

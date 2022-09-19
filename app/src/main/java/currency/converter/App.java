@@ -103,8 +103,11 @@ public class App {
                     // Add exchange rate
                     if (checkAdmin(isAdmin) && checkArgLength(2, input_list)) {
                         String currCurrency = input_list[1];
-                        handler.addCurrency(currCurrency);
-                        System.out.println("Currency successfully added.");
+                        boolean bool = handler.addCurrency(currCurrency);
+
+                        if (bool ==  true) {
+                            System.out.println("Currency successfully added.");
+                        }
                     }
                     break;
                 case "summary":
@@ -118,7 +121,10 @@ public class App {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                         LocalDate startDate = LocalDate.parse(start, formatter);
                         LocalDate endDate = LocalDate.parse(end, formatter);
-                        handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
+                        boolean bool = handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
+                        if (bool) {
+                            System.out.println("\nHistory successfully printed.");
+                        }
                     }
                     break;
                 case "exit":
