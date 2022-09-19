@@ -158,7 +158,13 @@ public class DatabaseTests {
         };
 
         dbm.addPopularCurrencies(popular);
+        assertNotEquals(dbm.getPopularCurrencies(), popular);
 
+        dbm.addCurrency("HKD");
+        dbm.addCurrency("GBP");
+        dbm.addCurrency("CHF");
+        dbm.addCurrency("KRW");
+        dbm.addPopularCurrencies(popular);
         assertEquals(dbm.getPopularCurrencies(), popular);
     }
 

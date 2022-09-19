@@ -294,6 +294,29 @@ public class DatabaseManager {
             JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
             JSONArray popular = new JSONArray();
 
+            // Checks if currency exists in json, if not, return false;
+            JSONArray rates = (JSONArray) database.get("rates");
+
+            for (String s : currencies) {
+                boolean currencyExists = false;
+
+                if (s.equals("AUD")) {
+                    return true;
+                }
+
+                for (int i = 0; i < rates.size(); i++) {
+                    JSONObject rate = (JSONObject) rates.get(i);
+                    if (s.equals(rate.get("rate"))) {
+                        currencyExists = true;
+                    }
+                }
+
+                if (!currencyExists) {
+                    System.out.println(s + " does not exist!");
+                    return false;
+                }
+            }
+
             popular.addAll(currencies);
 
             database.put("popular", popular);
@@ -310,7 +333,7 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
 
-        // Needs error checking return false;
+
     }
 
     public Boolean conversionIncreased(String fromCurr, String toCurr) {

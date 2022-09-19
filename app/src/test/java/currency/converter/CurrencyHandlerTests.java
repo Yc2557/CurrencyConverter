@@ -78,10 +78,22 @@ public class CurrencyHandlerTests {
 
             SGD.put("data", SGD_data);
 
+//            JPY
+            JSONObject JPY = new JSONObject();
+            JPY.put("rate", "JPY");
+            JSONArray JPY_data = new JSONArray();
+            JSONObject JPY_rate = new JSONObject();
+            JPY_rate.put("date", "01-09-2022");
+            JPY_rate.put("rate", 0.550);
+
+            JPY_data.add(JPY_rate);
+            JPY.put("data", JPY_data);
+
             //put all currencies into rate array
             rates.add(USD);
             rates.add(EUR);
             rates.add(SGD);
+            rates.add(JPY);
 
             database.put("rates", rates);
 
@@ -105,11 +117,10 @@ public class CurrencyHandlerTests {
 
         String[][] result = currencyHandler.displayPopular();
 
-
         assertEquals("-", result[0][0]);
         assertEquals("-", result[1][1]);
         assertEquals("0.99 (D)", result[0][1]);
-        assertEquals("0.00 (D)", result[0][3]);
+        assertEquals("0.80 (D)", result[0][3]);
         assertEquals("0.71 (D)", result[2][1]);
 
     }
@@ -153,5 +164,6 @@ public class CurrencyHandlerTests {
     @Test
     public void updatePopularTest() {
         assertTrue(currencyHandler.updatePopular("USD", "JPY", "SGD", "EUR"));
+        assertFalse(currencyHandler.updatePopular("USD", "JPY", "SGD", "ABD"));
     }
 }
