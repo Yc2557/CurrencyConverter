@@ -82,10 +82,19 @@ public class DatabaseTests {
 
             SGD.put("data", SGD_data);
 
+            //ABC with empty data
+            JSONObject ABC = new JSONObject();
+            ABC.put("rate", "ABC");
+            JSONArray ABC_data = new JSONArray();
+
+            ABC.put("data", ABC_data);
+
             //put all currencies into rate array
             rates.add(USD);
             rates.add(EUR);
             rates.add(SGD);
+            rates.add(ABC);
+
 
             database.put("rates", rates);
 
@@ -108,7 +117,6 @@ public class DatabaseTests {
     void testGetConversion() {
         DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
 
-        dbm.addCurrency("ABC");
         assertEquals(Math.round(dbm.getConversion("EUR", "AUD") * 1000) / 1000.0, 1.477);
         assertEquals(Math.round(dbm.getConversion("AUD", "EUR") * 1000) / 1000.0, 0.677);
         assertEquals(Math.round(dbm.getConversion("EUR", "USD") * 1000) / 1000.0, 1.01);
@@ -132,7 +140,7 @@ public class DatabaseTests {
         JSONArray rates = (JSONArray) database.get("rates");
 
 
-        assertEquals(3, DatabaseManager.getConversionIndex("NZD", rates)); //NZD in index 3
+        assertEquals(4, DatabaseManager.getConversionIndex("NZD", rates)); //NZD in index 4
     }
 
     @Test
