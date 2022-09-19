@@ -1,11 +1,4 @@
 {
-  "base": "AUD",
-  "popular": [
-    "AUD",
-    "EUR",
-    "SGD",
-    "USD"
-  ],
   "rates": [
     {
       "data": [
@@ -59,6 +52,17 @@
         }
       ],
       "rate": "CNY"
+    },
+    {
+      "data": [],
+      "rate": "JPY"
     }
-  ]
+  ],
+  "popular": [
+    "JPY",
+    "AUD",
+    "USD",
+    "EUR"
+  ],
+  "base": "AUD"
 }

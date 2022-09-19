@@ -114,9 +114,9 @@ public class DatabaseManager {
                         String rateTransform = String.valueOf(dateAndRate.get("rate"));
                         Float actualRate = Float.parseFloat(rateTransform);
                         if (cur1.equals("AUD")) {
-                            actualRate = 1/actualRate;
                             pastRates.put(conversionDate, actualRate);
                         } else {
+                            actualRate = 1 / actualRate;
                             pastRates.put(conversionDate, actualRate);
                         }
                     } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
@@ -301,7 +301,7 @@ public class DatabaseManager {
                 boolean currencyExists = false;
 
                 if (s.equals("AUD")) {
-                    return true;
+                    currencyExists = true;
                 }
 
                 for (int i = 0; i < rates.size(); i++) {
@@ -332,7 +332,6 @@ public class DatabaseManager {
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
-
 
     }
 
