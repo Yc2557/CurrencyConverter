@@ -4,11 +4,14 @@
 Java-based basic command-line currency converter. The converter enables users to convert between currencies, add/update currencies and conversions in a database, and display popular currencies and transaction histories. Data persists between loads, and is stored in a .json file.
 
 ## Use Notes
-To run the program, use the following (add code inside square brackets if running in admin mode);
+To run the program, use the following (add code inside square brackets if running in admin mode):
 ```
 gradle run [--args=”admin”]
 ```
-
+To run the GUI use:
+```
+gradle run --args=”gui”
+```
 To run test cases on the program, use the following:
 ```
 gradle test
