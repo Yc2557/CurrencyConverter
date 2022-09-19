@@ -126,10 +126,16 @@ public class AdminPanelController {
             updateRateResult.setText("Please Select All Currencies.");
             return;
         }
-        handler.updateCurrency(fromCurrencyChoice.getSelectionModel().getSelectedItem(),
+        boolean result = handler.updateCurrency(fromCurrencyChoice.getSelectionModel().getSelectedItem(),
                 toCurrencyChoice.getSelectionModel().getSelectedItem(),
                 Float.parseFloat(updateRateText.getText()),
                 LocalDate.now());
+
+        if (!result) {
+            updateRateResult.setFill(Color.RED);
+            updateRateResult.setText("One Currency Must Be AUD");
+            return;
+        }
 
         updateRateResult.setFill(Color.BLACK);
         updateRateResult.setText("Successfully Updated Rate.");
