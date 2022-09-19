@@ -23,6 +23,7 @@ public class App {
         if (args.length == 1) {
             isAdmin = Objects.equals(args[0], "admin");
         } else if (args.length == 2) {
+            isAdmin = Objects.equals(args[0], "admin");
             filePath = args[1];
         }
 
@@ -93,7 +94,9 @@ public class App {
                         String curr2 = input_list[2];
                         String curr3 = input_list[3];
                         String curr4 = input_list[4];
-                        handler.updatePopular(curr1, curr2, curr3, curr4);
+                        if (handler.updatePopular(curr1, curr2, curr3, curr4)) {
+                            System.out.println("Popular list successfully updated.");
+                        }
                     }
                     break;
                 case "add":
@@ -101,6 +104,7 @@ public class App {
                     if (checkAdmin(isAdmin) && checkArgLength(2, input_list)) {
                         String currCurrency = input_list[1];
                         handler.addCurrency(currCurrency);
+                        System.out.println("Currency successfully added.");
                     }
                     break;
                 case "summary":

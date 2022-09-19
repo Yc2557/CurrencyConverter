@@ -3,7 +3,6 @@ plugins {
     id 'application'
     id 'jacoco'
     id 'java'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 repositories {
@@ -43,11 +42,6 @@ jacocoTestReport {
 test {
     useJUnitPlatform()
     test.finalizedBy jacocoTestReport // <- add this line
-}
-
-javafx {
-    version = "17.0.2"
-    modules = ['javafx.controls', 'javafx.fxml']
 }
 
 run{

@@ -18,7 +18,7 @@ import java.io.FileWriter;
 import java.time.LocalDate;
 
 class AppTest {
-    private final String DATABASE_LOCATION = "src/test/resources/appTest.json";
+    private static final String DATABASE_LOCATION = "src/test/resources/appTest.json";
 
     // Building a sample database for testing
     @BeforeAll
@@ -33,7 +33,7 @@ class AppTest {
             popular.add("USD");
             popular.add("EUR");
             popular.add("SGD");
-            popular.add("JPY");
+            popular.add("AUD");
             database.put("popular", popular);
 
             // Adding rate objects for USD, EUR and SGD
@@ -111,7 +111,7 @@ class AppTest {
         String userInput = "convert USD AUD 100\nexit";
         System.setIn(new ByteArrayInputStream(userInput.getBytes()));
 
-        String expected = "The conversion of 100.00 USD is: 146.19 AUD";
+        String expected = "The conversion of 100.00 USD is: 56.00 AUD";
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         PrintStream pStream = new PrintStream(output);
         System.setOut(pStream);
@@ -120,16 +120,120 @@ class AppTest {
         args[1] = DATABASE_LOCATION;
 
         App.main(args);
-        String[] lines = output.toString().split("\n");
+        String[] lines = output.toString().split(System.lineSeparator());
         String actual = lines[lines.length - 3];
 
         assertEquals(expected, actual);
 
-        // Test for invalid currency and invalid arguments
     }
 
     @Test
-    void appDisplayMethods() {
+    void appDisplay() {
+        // Test display method
+        String userInput = "display\nexit";
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
+
+        String expected = "AUD 	0.68 (U) 0.68 (D) 0.95 (D) -        ";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[2];
+        args[0] = "test";
+        args[1] = DATABASE_LOCATION;
+
+        App.main(args);
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length - 3];
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void appUpdate() {
+        // Test update method
+        String userInput = "update USD AUD 0.56\nexit";
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
+
+        String expected = "Currency successfully updated.";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[2];
+        args[0] = "admin";
+        args[1] = DATABASE_LOCATION;
+
+        App.main(args);
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length - 3];
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void appUpdatePopular() {
+        // Test update popular method
+        String userInput = "update-popular AUD SGD USD EUR\nexit";
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
+
+        String expected = "Popular list successfully updated.";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[2];
+        args[0] = "admin";
+        args[1] = DATABASE_LOCATION;
+
+        App.main(args);
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length - 3];
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void appAdd() {
+        // Test add method
+        String userInput = "add JPY\nexit";
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
+
+        String expected = "Currency successfully added.";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[2];
+        args[0] = "admin";
+        args[1] = DATABASE_LOCATION;
+
+        App.main(args);
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length - 3];
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void appSummary() {
+        // Test summary method
+        String userInput = "summary AUD USD 01-09-2022 10-09-2022\nexit";
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
+
+        String expected = "max: 1.4771049";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[2];
+        args[0] = "admin";
+        args[1] = DATABASE_LOCATION;
+
+        App.main(args);
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length - 3];
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void appHelp() {
         // Test display
         // Test summary method
         // Test help method
@@ -151,17 +255,44 @@ class AppTest {
     }
 
     @Test
-    void appUpdate() {
+    void appInvalidArgs() {
+        // Test for invalid currency and invalid arguments
+        String userInputInvalid = "convert USD\nexit";
+        System.setIn(new ByteArrayInputStream(userInputInvalid.getBytes()));
 
+        String expected = "Invalid number of arguments";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[2];
+        args[0] = "test";
+        args[1] = DATABASE_LOCATION;
+
+        App.main(args);
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length - 3];
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void appUpdatePopular() {
+    void appAdminFail() {
+        // Test updating when not admin
+        String userInput = "update USD AUD 0.56\nexit";
+        System.setIn(new ByteArrayInputStream(userInput.getBytes()));
 
-    }
+        String expected = "You are not an admin, please try again.";
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream pStream = new PrintStream(output);
+        System.setOut(pStream);
+        String[] args = new String[2];
+        args[0] = "test";
+        args[1] = DATABASE_LOCATION;
 
-    @Test
-    void appAdd() {
+        App.main(args);
+        String[] lines = output.toString().split(System.lineSeparator());
+        String actual = lines[lines.length - 3];
 
+        assertEquals(expected, actual);
     }
 }
