@@ -32,15 +32,26 @@ public class DatabaseManager {
                 return 0;
             }
 
+
             if (fromCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
+
+                if (currData.size() == 0) {
+                    return 0;
+                }
+
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
                 return (double) currRateObject.get("rate");
             } else if (toCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
+
+                if (currData.size() == 0) {
+                    return 0;
+                }
+
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
                 // Taking the inverse because the rates are stored FROM the AUD in the database
@@ -55,6 +66,10 @@ public class DatabaseManager {
                 // which contain all the historical & present rates
                 JSONArray fromCurrData = (JSONArray) fromCurrObject.get("data");
                 JSONArray toCurrData = (JSONArray) toCurrObject.get("data");
+
+                if (fromCurrData.size() ==  0|| toCurrData.size() == 0) {
+                    return 0;
+                }
 
                 // Extracting the most recent exchange rates of the two currencies
                 JSONObject fromCurrRateObject = (JSONObject) fromCurrData.get(fromCurrData.size() - 1);

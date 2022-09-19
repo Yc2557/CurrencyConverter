@@ -108,9 +108,13 @@ public class DatabaseTests {
     void testGetConversion() {
         DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
 
+        dbm.addCurrency("ABC");
         assertEquals(Math.round(dbm.getConversion("EUR", "AUD") * 1000) / 1000.0, 1.477);
         assertEquals(Math.round(dbm.getConversion("AUD", "EUR") * 1000) / 1000.0, 0.677);
         assertEquals(Math.round(dbm.getConversion("EUR", "USD") * 1000) / 1000.0, 1.01);
+        assertEquals(dbm.getConversion("ABC", "AUD"), 0);
+        assertEquals(dbm.getConversion("AUD", "ABC"), 0);
+        assertEquals(dbm.getConversion("EUR", "ABC"), 0);
 
         assertEquals(dbm.getConversion("EUR", "XRP"), 0);
         assertEquals(dbm.getConversion("XRP", "USD"), 0);
