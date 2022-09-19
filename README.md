@@ -3,10 +3,12 @@
 
 Java-based basic command-line or GUI currency converter. The converter enables users to convert between currencies, add/update currencies and conversions in a database, and display popular currencies and transaction histories. Data persists between loads, and is stored in a .json file.
 
-Command Line
+## Command Line
+
 ![image](https://media.github.sydney.edu.au/user/15252/files/a4bb2c3c-9681-4ef7-ab59-8b08b7a4efa9)
 
-GUI
+## GUI
+
 ![image](https://media.github.sydney.edu.au/user/15252/files/8e4cc4a0-5b78-4c17-920f-6a937dc03457)
 
 ## Use Notes
