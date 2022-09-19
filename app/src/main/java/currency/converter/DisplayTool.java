@@ -42,8 +42,4 @@ public class DisplayTool {
         System.out.println("exit - exits the program");
         System.out.println("help - displays this help menu");
     }
-
-    static void displaySummary() {
-
-    }
 }
