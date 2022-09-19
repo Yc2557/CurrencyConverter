@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDate;
-
+import java.util.ArrayList;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CurrencyHandlerTests {
@@ -126,8 +127,31 @@ public class CurrencyHandlerTests {
         assertFalse(currencyHandler.updateCurrency("USD", "SGD", 1.5f, LocalDate.now()));
         assertTrue(currencyHandler.updateCurrency("USD", "AUD", 1.5f, LocalDate.now()));
 
-
         assertEquals(150.00, Math.round(currencyHandler.convertCurrency(100, "USD", "AUD")* 1000) / 1000.0);
     }
 
+    @Test
+    public void convertCurrencyTest() {
+        assertEquals(1.90, currencyHandler.convertCurrency(2f, "AUD", "SGD"));
+        assertEquals(2.11, Math.round(currencyHandler.convertCurrency(2f, "SGD", "AUD")*100) / 100.0);
+
+        assertEquals(1.44, Math.round(currencyHandler.convertCurrency(2f, "SGD", "USD")*100) / 100.0);
+        assertEquals(2.78, Math.round(currencyHandler.convertCurrency(2f, "USD", "SGD")*100) / 100.0);
+    }
+
+    @Test
+    public void getPopularCurrenciesTest() {
+        List<String> expected = new ArrayList<>();
+        expected.add("USD");
+        expected.add("EUR");
+        expected.add("SGD");
+        expected.add("JPY");
+
+        assertEquals(expected, currencyHandler.getPopularCurrencies());
+    }
+
+    @Test
+    public void updatePopularTest() {
+        assertTrue(currencyHandler.updatePopular("USD", "JPY", "SGD", "EUR"));
+    }
 }
