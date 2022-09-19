@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 class AppTest {
     private static final String DATABASE_LOCATION = "src/test/resources/appTest.json";

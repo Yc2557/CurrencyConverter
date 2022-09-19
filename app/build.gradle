@@ -41,12 +41,18 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-jacocoTestReport { 
-    reports { 
-        html.enabled = true 
+jacocoTestReport {
+    reports {
+        html.enabled = true
         csv.enabled = true 
     }
-}  
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: '**/*Controller*')
+        }))
+    }
+
+}
 
 test {
     useJUnitPlatform()

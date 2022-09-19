@@ -145,6 +145,18 @@ public class CurrencyHandlerTests {
     }
 
     @Test
+    public void getCurrenciesTest() { //to from???
+        List<String> expected = new ArrayList<>();
+        expected.add("AUD");
+        expected.add("USD");
+        expected.add("EUR");
+        expected.add("SGD");
+        expected.add("JPY");
+
+        assertEquals(expected, currencyHandler.getCurrencies());
+    }
+
+    @Test
     public void convertCurrencyTest() {
         assertEquals(1.90, currencyHandler.convertCurrency(2f, "AUD", "SGD"));
         assertEquals(2.11, Math.round(currencyHandler.convertCurrency(2f, "SGD", "AUD")*100) / 100.0);

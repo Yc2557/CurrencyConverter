@@ -4,11 +4,13 @@
 package currency.converter;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.List;
@@ -18,18 +20,143 @@ import java.time.LocalDate;
 
 public class App extends Application {
     public static void main(String[] args) {
+        // Initialise variables
+        Scanner sc = new Scanner(System.in);
+        String input;
+        boolean exitFlag = false;
+        boolean isAdmin = false;
+        String filePath = "";
+
+        // Check command args for admin prompt and file path
         if (args.length == 1) {
+
+            isAdmin = Objects.equals(args[0], "admin");
             if (args[0].equalsIgnoreCase("gui")) {
                 runGUIMode();
-            } else if (args[0].equalsIgnoreCase("admin")){
-                runTerminalMode(args);
-            } else {
-                System.out.println("Invalid Arguments. Use 'Admin' or 'GUI'");
+                exitFlag = true;
             }
-        } else {
-            runTerminalMode(args);
+        } else if (args.length == 2) {
+            isAdmin = Objects.equals(args[0], "admin");
+            filePath = args[1];
         }
-        System.exit(0);
+
+        if (!exitFlag) {
+
+            CurrencyHandler handler;
+            // Set user to admin if command arg given
+            if (args.length == 2) {
+                handler = new CurrencyHandler(isAdmin, filePath);
+            } else {
+                handler = new CurrencyHandler(isAdmin, "src/main/resources/database.json");
+            }
+
+            // Print out entry message
+            DisplayTool.displayTitle();
+
+            // Command Line Loop
+
+            do {
+                System.out.println("Please input your command: ");
+                input = sc.nextLine();
+
+                // Break up input
+                String[] input_list = input.split(" ");
+                String command = input_list[0];
+
+                switch (command) {
+                    case "convert":
+                        // Converts one currency to the other, and prints the result
+                        if (checkArgLength(4, input_list)) {
+                            String currCurrency = input_list[1];
+                            String newCurrency = input_list[2];
+                            float amount = Float.parseFloat(input_list[3]);
+                            double currency = handler.convertCurrency(amount, currCurrency, newCurrency);
+                            if (currency == 0) {
+                                System.out.println("Invalid currency inputted, please try again.");
+                            } else {
+                                System.out.printf("The conversion of %.02f %s is: %.02f %s%n", amount, currCurrency,
+                                        currency, newCurrency);
+                            }
+                        }
+                        break;
+                    case "display":
+                        // Displays popular results
+                        String[][] values = handler.displayPopular();
+                        if (values == null) {
+                            System.out.println("Could not display due to lack of data!");
+                        } else {
+                            List<String> popularCurrencies = handler.getPopularCurrencies();
+                            DisplayTool.displayPopular(values, popularCurrencies);
+                        }
+                        break;
+                    case "update":
+                        // Updates dataset
+                        if (checkAdmin(isAdmin) && checkArgLength(4, input_list)) {
+                            String currCurrency = input_list[1];
+                            String newCurrency = input_list[2];
+                            float newRate = Float.parseFloat(input_list[3]);
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                            String date = LocalDate.now().toString();
+                            LocalDate currentDate = LocalDate.parse(date, formatter);
+                            if (handler.updateCurrency(currCurrency, newCurrency, newRate, currentDate)) {
+                                System.out.println("Currency successfully updated.");
+                            }
+                        }
+                        break;
+                    case "update-popular":
+                        // Updates popular currencies
+                        if (checkAdmin(isAdmin) && checkArgLength(5, input_list)) {
+                            String curr1 = input_list[1];
+                            String curr2 = input_list[2];
+                            String curr3 = input_list[3];
+                            String curr4 = input_list[4];
+                            if (handler.updatePopular(curr1, curr2, curr3, curr4)) {
+                                System.out.println("Popular list successfully updated.");
+                            }
+                        }
+                        break;
+                    case "add":
+                        // Add exchange rate
+                        if (checkAdmin(isAdmin) && checkArgLength(2, input_list)) {
+                            String currCurrency = input_list[1];
+                            boolean bool = handler.addCurrency(currCurrency);
+
+                            if (bool) {
+                                System.out.println("Currency successfully added.");
+                            }
+                        }
+                        break;
+                    case "summary":
+                        // Print out conversion history of two currencies
+                        if (checkArgLength(5, input_list)) {
+                            String currCurrency = input_list[1];
+                            String newCurrency = input_list[2];
+                            String start = input_list[3];
+                            String end = input_list[4];
+
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                            LocalDate startDate = LocalDate.parse(start, formatter);
+                            LocalDate endDate = LocalDate.parse(end, formatter);
+                            handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
+                        }
+                        break;
+                    case "exit":
+                        System.out.println("Have a good day!");
+                        exitFlag = true;
+                        break;
+                    case "help":
+                        DisplayTool.displayHelp();
+                        break;
+                    default:
+                        System.out.println("The command you've entered is invalid.");
+                }
+
+            } while (!exitFlag);
+
+            sc.close();
+            Platform.exit();
+        }
+
     }
 
     @Override
@@ -62,131 +189,6 @@ public class App extends Application {
     }
 
     private static void runTerminalMode(String[] args) {
-        // Initialise variables
-        Scanner sc = new Scanner(System.in);
-        String input;
-        boolean exitFlag = false;
-        boolean isAdmin = false;
-        String filePath = "";
 
-        // Check command args for admin prompt and file path
-        if (args.length == 1) {
-            isAdmin = Objects.equals(args[0], "admin");
-        } else if (args.length == 2) {
-            isAdmin = Objects.equals(args[0], "admin");
-            filePath = args[1];
-        }
-
-        CurrencyHandler handler;
-        // Set user to admin if command arg given
-        if (args.length == 2) {
-            handler = new CurrencyHandler(isAdmin, filePath);
-        } else {
-            handler = new CurrencyHandler(isAdmin, "src/main/resources/database.json");
-        }
-
-        // Print out entry message
-        DisplayTool.displayTitle();
-
-        // Command Line Loop
-        do {
-            System.out.println("Please input your command: ");
-            input = sc.nextLine();
-
-            // Break up input
-            String[] input_list = input.split(" ");
-            String command = input_list[0];
-
-            switch (command) {
-                case "convert":
-                    // Converts one currency to the other, and prints the result
-                    if (checkArgLength(4, input_list)) {
-                        String currCurrency = input_list[1];
-                        String newCurrency = input_list[2];
-                        float amount = Float.parseFloat(input_list[3]);
-                        double currency = handler.convertCurrency(amount, currCurrency, newCurrency);
-                        if (currency == 0) {
-                            System.out.println("Invalid currency inputted, please try again.");
-                        } else {
-                            System.out.printf("The conversion of %.02f %s is: %.02f %s%n", amount, currCurrency,
-                                    currency, newCurrency);
-                        }
-                    }
-                    break;
-                case "display":
-                    // Displays popular results
-                    String[][] values = handler.displayPopular();
-                    if (values == null) {
-                        System.out.println("Could not display due to lack of data!");
-                    } else {
-                        List<String> popularCurrencies = handler.getPopularCurrencies();
-                        DisplayTool.displayPopular(values, popularCurrencies);
-                    }
-                    break;
-                case "update":
-                    // Updates dataset
-                    if (checkAdmin(isAdmin) && checkArgLength(4, input_list)) {
-                        String currCurrency = input_list[1];
-                        String newCurrency = input_list[2];
-                        float newRate = Float.parseFloat(input_list[3]);
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        String date = LocalDate.now().toString();
-                        LocalDate currentDate = LocalDate.parse(date, formatter);
-                        if (handler.updateCurrency(currCurrency, newCurrency, newRate, currentDate)) {
-                            System.out.println("Currency successfully updated.");
-                        }
-                    }
-                    break;
-                case "update-popular":
-                    // Updates popular currencies
-                    if (checkAdmin(isAdmin) && checkArgLength(5, input_list)) {
-                        String curr1 = input_list[1];
-                        String curr2 = input_list[2];
-                        String curr3 = input_list[3];
-                        String curr4 = input_list[4];
-                        if (handler.updatePopular(curr1, curr2, curr3, curr4)) {
-                            System.out.println("Popular list successfully updated.");
-                        }
-                    }
-                    break;
-                case "add":
-                    // Add exchange rate
-                    if (checkAdmin(isAdmin) && checkArgLength(2, input_list)) {
-                        String currCurrency = input_list[1];
-                        boolean bool = handler.addCurrency(currCurrency);
-
-                        if (bool ==  true) {
-                            System.out.println("Currency successfully added.");
-                        }
-                    }
-                    break;
-                case "summary":
-                    // Print out conversion history of two currencies
-                    if (checkArgLength(5, input_list)) {
-                        String currCurrency = input_list[1];
-                        String newCurrency = input_list[2];
-                        String start = input_list[3];
-                        String end = input_list[4];
-
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                        LocalDate startDate = LocalDate.parse(start, formatter);
-                        LocalDate endDate = LocalDate.parse(end, formatter);
-                        handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
-                    }
-                    break;
-                case "exit":
-                    System.out.println("Have a good day!");
-                    exitFlag = true;
-                    break;
-                case "help":
-                    DisplayTool.displayHelp();
-                    break;
-                default:
-                    System.out.println("The command you've entered is invalid.");
-            }
-
-        } while (!exitFlag);
-
-        sc.close();
     }
 }
