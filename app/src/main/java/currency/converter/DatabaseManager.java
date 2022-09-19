@@ -2,6 +2,7 @@ package currency.converter;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -546,4 +547,27 @@ public class DatabaseManager {
         return true;
     }
 
+    public List<String> getCurrencies() {
+        try {
+
+            List<String> currList = new ArrayList<>();
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
+
+            JSONArray rates = (JSONArray) database.get("rates");
+            String base = (String) database.get("base");
+            currList.add(base);
+
+            for (Object rate: rates) {
+                JSONObject curr = (JSONObject) rate;
+                currList.add(curr.get("rate").toString());
+            }
+
+            return currList;
+
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

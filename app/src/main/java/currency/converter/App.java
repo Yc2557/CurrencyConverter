@@ -3,6 +3,12 @@
  */
 package currency.converter;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.List;
@@ -10,8 +16,52 @@ import java.util.List;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 
-public class App {
+public class App extends Application {
     public static void main(String[] args) {
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("gui")) {
+                runGUIMode();
+            } else if (args[0].equalsIgnoreCase("admin")){
+                runTerminalMode(args);
+            } else {
+                System.out.println("Invalid Arguments. Use 'Admin' or 'GUI'");
+            }
+        } else {
+            runTerminalMode(args);
+        }
+        System.exit(0);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("Login.fxml"));
+        primaryStage.setTitle("Currency Converter");
+        primaryStage.setScene(new Scene(root, 550, 400));
+        primaryStage.show();
+    }
+
+    private static void runGUIMode() {
+        launch();
+    }
+
+    private static boolean checkAdmin(boolean isAdmin) {
+        if (!isAdmin) {
+            System.out.println("You are not an admin, please try again.");
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean checkArgLength(int length, String[] arg_list) {
+        if (arg_list.length != length) {
+            System.out.println("Invalid number of arguments");
+            return false;
+        }
+        return true;
+    }
+
+    private static void runTerminalMode(String[] args) {
         // Initialise variables
         Scanner sc = new Scanner(System.in);
         String input;
@@ -121,7 +171,7 @@ public class App {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                         LocalDate startDate = LocalDate.parse(start, formatter);
                         LocalDate endDate = LocalDate.parse(end, formatter);
-                        boolean bool = handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
+                        handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
                     }
                     break;
                 case "exit":
@@ -138,21 +188,5 @@ public class App {
         } while (!exitFlag);
 
         sc.close();
-    }
-
-    private static boolean checkAdmin(boolean isAdmin) {
-        if (!isAdmin) {
-            System.out.println("You are not an admin, please try again.");
-            return false;
-        }
-        return true;
-    }
-
-    private static boolean checkArgLength(int length, String[] arg_list) {
-        if (arg_list.length != length) {
-            System.out.println("Invalid number of arguments");
-            return false;
-        }
-        return true;
     }
 }
