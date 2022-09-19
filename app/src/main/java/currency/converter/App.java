@@ -31,7 +31,7 @@ public class App {
         if (args.length == 2) {
             handler = new CurrencyHandler(isAdmin, filePath);
         } else {
-            handler = new CurrencyHandler(isAdmin, "app/src/main/resources/database.json");
+            handler = new CurrencyHandler(isAdmin, "src/main/resources/database.json");
         }
 
         // Print out entry message
@@ -49,7 +49,7 @@ public class App {
             switch (command) {
                 case "convert":
                     // Converts one currency to the other, and prints the result
-                    if (input_list.length == 4) {
+                    if (checkArgLength(4, input_list)) {
                         String currCurrency = input_list[1];
                         String newCurrency = input_list[2];
                         float amount = Float.parseFloat(input_list[3]);
@@ -57,10 +57,9 @@ public class App {
                         if (currency == 0) {
                             System.out.println("Invalid currency inputted, please try again.");
                         } else {
-                            System.out.printf("The conversion of %.02f %s is: %.02f %s%n", amount, currCurrency, currency, newCurrency);
+                            System.out.printf("The conversion of %.02f %s is: %.02f %s%n", amount, currCurrency,
+                                    currency, newCurrency);
                         }
-                    } else {
-                        System.out.println("Invalid number of arguments");
                     }
                     break;
                 case "display":
@@ -72,47 +71,41 @@ public class App {
                         List<String> popularCurrencies = handler.getPopularCurrencies();
                         DisplayTool.displayPopular(values, popularCurrencies);
                     }
-
                     break;
                 case "update":
                     // Updates dataset
-                    if (input_list.length == 4) {
+                    if (checkAdmin(isAdmin) && checkArgLength(4, input_list)) {
                         String currCurrency = input_list[1];
                         String newCurrency = input_list[2];
                         float newRate = Float.parseFloat(input_list[3]);
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                         String date = LocalDate.now().toString();
                         LocalDate currentDate = LocalDate.parse(date, formatter);
-                        handler.updateCurrency(currCurrency, newCurrency, newRate, currentDate);
-                        System.out.println("Currency successfully updated.");
-                    } else {
-                        System.out.println("Invalid number of arguments");
+                        if (handler.updateCurrency(currCurrency, newCurrency, newRate, currentDate)) {
+                            System.out.println("Currency successfully updated.");
+                        }
                     }
                     break;
                 case "update-popular":
                     // Updates popular currencies
-                    if (input_list.length == 5) {
+                    if (checkAdmin(isAdmin) && checkArgLength(5, input_list)) {
                         String curr1 = input_list[1];
                         String curr2 = input_list[2];
                         String curr3 = input_list[3];
                         String curr4 = input_list[4];
                         handler.updatePopular(curr1, curr2, curr3, curr4);
-                    } else {
-                        System.out.println("Invalid number of arguments");
                     }
                     break;
                 case "add":
                     // Add exchange rate
-                    if (input_list.length == 2) {
+                    if (checkAdmin(isAdmin) && checkArgLength(2, input_list)) {
                         String currCurrency = input_list[1];
                         handler.addCurrency(currCurrency);
-                    } else {
-                        System.out.println("Invalid number of arguments");
                     }
                     break;
                 case "summary":
                     // Print out conversion history of two currencies
-                    if (input_list.length == 5) {
+                    if (checkArgLength(5, input_list)) {
                         String currCurrency = input_list[1];
                         String newCurrency = input_list[2];
                         String start = input_list[3];
@@ -122,8 +115,6 @@ public class App {
                         LocalDate startDate = LocalDate.parse(start, formatter);
                         LocalDate endDate = LocalDate.parse(end, formatter);
                         handler.printConversionHistory(currCurrency, newCurrency, startDate, endDate);
-                    } else {
-                        System.out.println("Invalid number of arguments");
                     }
                     break;
                 case "exit":
@@ -140,5 +131,21 @@ public class App {
         } while (!exitFlag);
 
         sc.close();
+    }
+
+    private static boolean checkAdmin(boolean isAdmin) {
+        if (!isAdmin) {
+            System.out.println("You are not an admin, please try again.");
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean checkArgLength(int length, String[] arg_list) {
+        if (arg_list.length != length) {
+            System.out.println("Invalid number of arguments");
+            return false;
+        }
+        return true;
     }
 }
