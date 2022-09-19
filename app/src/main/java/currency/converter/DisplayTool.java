@@ -12,12 +12,17 @@ public class DisplayTool {
     }
 
     static void displayPopular(String[][] values, List<String> popularCurrencies) {
-        System.out.println("From/To\t" + popularCurrencies.get(0) + "\t" + popularCurrencies.get(1) + "\t"
-                + popularCurrencies.get(2) + "\t" + popularCurrencies.get(3));
+        System.out.println("From/To\t" + popularCurrencies.get(0) + "      " + popularCurrencies.get(1) + "      "
+                + popularCurrencies.get(2) + "      " + popularCurrencies.get(3));
         for (int i = 0; i < popularCurrencies.size(); i++) {
-            System.out.print(popularCurrencies.get(i) + "\t");
+            System.out.print(popularCurrencies.get(i) + " \t");
             for (int j = 0; j < popularCurrencies.size(); j++) {
-                System.out.print(values[i][j] + "\t");
+                if (values[i][j].equals("-")) {
+                    System.out.print(values[i][j] + "        ");
+                } else {
+                    System.out.print(values[i][j] + " ");
+                }
+
             }
             System.out.println();
         }
@@ -33,12 +38,8 @@ public class DisplayTool {
                 "update-popular [curr1] [curr2] [curr3] [curr4] - updates the current popular currencies to the four user inputs");
         System.out.println("add [curr1] - adds a new exchange rate");
         System.out.println(
-                "summary [curr1] [curr2] [start-date] [end-date] - displays the conversion history of curr1 to curr2, with date given in dd/mm/yyyy format");
+                "summary [curr1] [curr2] [start-date] [end-date] - displays the conversion history of curr1 to curr2, with date given in dd-mm-yyyy format");
         System.out.println("exit - exits the program");
         System.out.println("help - displays this help menu");
-    }
-
-    static void displaySummary() {
-
     }
 }

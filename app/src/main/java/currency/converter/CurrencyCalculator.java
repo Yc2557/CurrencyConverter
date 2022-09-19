@@ -11,17 +11,19 @@ public class CurrencyCalculator {
         float powerSum2 = 0;
         float sd = 0;
 
-        for (int i = 0; i < list.size(); i++) {
-            powerSum1 += list.get(i);
-            powerSum2 += Math.pow(list.get(i), 2);
-            sd = (float) (Math.sqrt(i * powerSum2 - Math.pow(powerSum1, 2))/i);
+        for (Float aFloat : list) {
+            powerSum1 += aFloat;
+            powerSum2 += Math.pow(aFloat, 2);
         }
+
+        sd = (float) (Math.sqrt(list.size() * powerSum2 - Math.pow(powerSum1, 2))/list.size());
 
         return sd;
     }
 
     private float calculateMean(List<Float> list) {
         float sum = 0;
+
 
         for (Float aFloat : list) {
             sum += aFloat;
@@ -31,7 +33,15 @@ public class CurrencyCalculator {
     }
 
     private float calculateMedian(List<Float> list) {
+        if (list.size() == 0) {
+            return 0f;
+        }
+
         Collections.sort(list);
+
+        if (list.size() == 0) {
+            return 0f;
+        }
 
         if (list.size() % 2 == 1) {
             return list.get((list.size() + 1)/2 - 1);

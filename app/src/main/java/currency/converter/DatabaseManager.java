@@ -1,15 +1,9 @@
 package currency.converter;
 
-import java.util.List;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Iterator;
-import java.io.FileNotFoundException;
-import java.util.Date;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,38 +11,51 @@ import org.json.simple.parser.*;
 
 public class DatabaseManager {
 
-    private boolean isAdmin;
+    private final String FILE_NAME;
     // private JSONParser jsonParser; <-- maybe?
 
-    public DatabaseManager(boolean isAdmin) {
-        this.isAdmin = isAdmin;
+    public DatabaseManager(String fileName) {
+        this.FILE_NAME = fileName;
     }
 
-    public float getConversion(String fromCurr, String toCurr) {
+    public double getConversion(String fromCurr, String toCurr) {
         try {
             // Parsing the .json database to a JSONObject
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("src/main/java/currency/converter/database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             // Extracting the rates array from the database
             JSONArray rates = (JSONArray) database.get("rates");
 
-            if (fromCurr == "AUD") {
+            // Checking that currency exists
+            if (!currencyExists(fromCurr, rates) || !currencyExists(toCurr, rates)) {
+                return 0;
+            }
+
+
+            if (fromCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
+
+                if (currData.size() == 0) {
+                    return 0;
+                }
+
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
-                // Taking the inverse because the rates are stored TO the AUD in the database
-                float rate = 1 / (float) currRateObject.get("rate");
-                return rate;
-            } else if (toCurr == "AUD") {
+                return (double) currRateObject.get("rate");
+            } else if (toCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray currData = (JSONArray) currObject.get("data");
+
+                if (currData.size() == 0) {
+                    return 0;
+                }
+
                 JSONObject currRateObject = (JSONObject) currData.get(currData.size() - 1);
 
-                // Taking the inverse because the rates are stored TO the AUD in the database
-                float rate = (float) currRateObject.get("rate");
-                return rate;
+                // Taking the inverse because the rates are stored FROM the AUD in the database
+                return (1 / (double) currRateObject.get("rate"));
 
             } else {
                 // Extracting the specific currency objects from the database
@@ -60,13 +67,17 @@ public class DatabaseManager {
                 JSONArray fromCurrData = (JSONArray) fromCurrObject.get("data");
                 JSONArray toCurrData = (JSONArray) toCurrObject.get("data");
 
+                if (fromCurrData.size() ==  0|| toCurrData.size() == 0) {
+                    return 0;
+                }
+
                 // Extracting the most recent exchange rates of the two currencies
                 JSONObject fromCurrRateObject = (JSONObject) fromCurrData.get(fromCurrData.size() - 1);
                 JSONObject toCurrRateObject = (JSONObject) toCurrData.get(toCurrData.size() - 1);
 
                 // Extracting the most recent rates for each of the currencies
-                float rate1 = (float) fromCurrRateObject.get("rate");
-                float rate2 = (float) toCurrRateObject.get("rate");
+                double rate1 = (double) fromCurrRateObject.get("rate");
+                double rate2 = (double) toCurrRateObject.get("rate");
 
                 // Calculating & returning the finalised exchange rate between
                 // the two currencies (rate = to/from)
@@ -78,21 +89,40 @@ public class DatabaseManager {
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
+    public HashMap<String, Float> getPastConversion(String cur1, String cur2, String startDate,
             String endDate) {
 
-        HashMap<String, Float> pastRates = new HashMap<String, Float>();
+        HashMap<String, Float> pastRates = new HashMap<>();
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
+            JSONArray rates = (JSONArray) database.get("rates");
+
+            boolean currency1Exists = false;
+            boolean currency2Exists = false;
+
+            for (int i = 0; i < rates.size(); i++) {
+                JSONObject rate = (JSONObject) rates.get(i);
+                if (cur1.equals(rate.get("rate"))) {
+                    currency1Exists = true;
+                } else if (cur2.equals(rate.get("rate"))) {
+                    currency2Exists = true;
+                }
+            }
+
+            if (!currency1Exists && !cur1.equals("AUD")) {
+                System.out.println(cur1 + " doesn't exist in the database.\n");
+                return null;
+            } else if (!currency2Exists && !cur2.equals("AUD")) {
+                System.out.println(cur2 + " doesn't exist in the database.\n");
+                return null;
+            }
 
             if (cur1.equals("AUD") || cur2.equals("AUD")) {
 
@@ -107,19 +137,25 @@ public class DatabaseManager {
                 JSONObject cur = (JSONObject) ratesArray.get(getConversionIndex(referenceCur, ratesArray));
                 JSONArray currency1Rates = (JSONArray) cur.get("data");
 
-                for (int i = 0; i < currency1Rates.size(); i++) {
+                for (Object currency1Rate : currency1Rates) {
 
-                    JSONObject dateAndRate = (JSONObject) currency1Rates.get(i);
+                    JSONObject dateAndRate = (JSONObject) currency1Rate;
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
 
-                        String rateTransform = (String) dateAndRate.get("rate");
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
+                            && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
+
+                        String rateTransform = String.valueOf(dateAndRate.get("rate"));
                         Float actualRate = Float.parseFloat(rateTransform);
-                        pastRates.put(conversionDate, actualRate);
-
-                    } else if (isBefore(endDate, conversionDate)) {
+                        if (cur1.equals("AUD")) {
+                            pastRates.put(conversionDate, actualRate);
+                        } else {
+                            actualRate = 1 / actualRate;
+                            pastRates.put(conversionDate, actualRate);
+                        }
+                    } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
                         break;
                     }
                 }
@@ -135,54 +171,49 @@ public class DatabaseManager {
                 JSONObject cur = (JSONObject) ratesArray.get(getConversionIndex(cur1, ratesArray));
                 JSONArray currencyArray = (JSONArray) cur.get("data");
 
-                HashMap<String, Float> currency1Map = new HashMap<String, Float>();
-                HashMap<String, Float> currency2Map = new HashMap<String, Float>();
+                HashMap<String, Float> currency1Map = new HashMap<>();
+                HashMap<String, Float> currency2Map = new HashMap<>();
 
                 // Fill conversion hashmap for curr1
-                for (int i = 0; i < currencyArray.size(); i++) {
+                for (Object o : currencyArray) {
 
-                    JSONObject dateAndRate = (JSONObject) currencyArray.get(i);
+                    JSONObject dateAndRate = (JSONObject) o;
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
 
-                        String rateTransform = (String) dateAndRate.get("rate");
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
+                            && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
+
+                        String rateTransform = String.valueOf(dateAndRate.get("rate"));
                         Float actualRate = Float.parseFloat(rateTransform);
                         currency1Map.put(conversionDate, actualRate);
 
-                    } else if (isBefore(endDate, conversionDate)) {
+                    } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
                         break;
                     }
                 }
                 // Reuse vars
                 cur = (JSONObject) ratesArray.get(getConversionIndex(cur2, ratesArray));
                 currencyArray = (JSONArray) cur.get("data");
-                // fill hashmap for curr2
-                for (int i = 0; i < currencyArray.size(); i++) {
 
-                    JSONObject dateAndRate = (JSONObject) currencyArray.get(i);
+                // fill hashmap for curr2
+                for (Object o : currencyArray) {
+
+                    JSONObject dateAndRate = (JSONObject) o;
                     String conversionDate = (String) dateAndRate.get("date");
 
                     // If conversionDate is between start and end date
-                    if (isBefore(startDate, conversionDate) && isBefore(conversionDate, endDate)) {
+                    if (Boolean.TRUE.equals(isBefore(startDate, conversionDate))
+                            && Boolean.TRUE.equals(isBefore(conversionDate, endDate))) {
 
-                        String rateTransform = (String) dateAndRate.get("rate");
+                        String rateTransform = String.valueOf(dateAndRate.get("rate"));
                         Float actualRate = Float.parseFloat(rateTransform);
-                        currency1Map.put(conversionDate, actualRate);
+                        currency2Map.put(conversionDate, actualRate);
 
-                    } else if (isBefore(endDate, conversionDate)) {
+                    } else if (Boolean.TRUE.equals(isBefore(endDate, conversionDate))) {
                         break;
                     }
-                }
-
-                // Pick the larger hashmap to work on
-                if (currency1Map.size() > currency2Map.size()) {
-                    ;
-                } else {
-                    HashMap<String, Float> tempMap = currency1Map;
-                    currency1Map = currency2Map;
-                    currency2Map = tempMap;
                 }
 
                 // For each entry in map 1, find any dates in map2 that are after that entry
@@ -191,54 +222,93 @@ public class DatabaseManager {
                     String key1 = entry.getKey();
                     Float value1 = entry.getValue();
 
+                    Float actualConversionRate = 0f;
                     for (Map.Entry<String, Float> map2 : currency2Map.entrySet()) {
                         String key2 = map2.getKey();
                         Float value2 = map2.getValue();
-                        if (!isBefore(key1, key2)) {
-                            value1 = value2 / value1;
+                        if (isBefore(key2, key1)) {
+                            actualConversionRate = value1 / value2;
                         }
                     }
+                    currency1Map.put(key1, actualConversionRate);
                 }
                 return currency1Map;
             }
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
 
         return pastRates;
     }
 
-    public void addConversion(String curr1, String curr2, float amount, String date) {
+    public void addConversion(String curr, float amount, String date) {
 
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             // Get the rates array, relevant currency array
             JSONArray rates = (JSONArray) database.get("rates");
-            JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr1, rates));
+            JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr, rates));
 
             // Get the date:rate array from that currency
             JSONArray currArray = (JSONArray) currObject.get("data");
 
             // Create a new currency obj, populate it
-            JSONObject newCur = (JSONObject) new JSONObject();
+            JSONObject newCur = new JSONObject();
             newCur.put("date", date);
             newCur.put("rate", amount);
 
             currArray.add(newCur);
 
+            FileWriter writer = new FileWriter(FILE_NAME);
+            writer.write(database.toJSONString());
+            writer.flush();
+            writer.close();
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
-        } catch (ParseException e) {
+        }
+    }
+
+    public boolean addCurrency(String curr) {
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
+            JSONArray rates = (JSONArray) database.get("rates");
+
+            boolean currencyExists = false;
+            for (int i = 0; i < rates.size(); i++) {
+                JSONObject rate = (JSONObject) rates.get(i);
+                if (curr.equals(rate.get("rate"))) {
+                    currencyExists = true;
+                }
+            }
+
+            if (currencyExists || curr.equals("AUD")) {
+                System.out.println("Currency already exists in the database.");
+                return false;
+            }
+
+            // Creating the new currency object
+            JSONObject currency = new JSONObject();
+            JSONArray data = new JSONArray();
+            currency.put("rate", curr);
+            currency.put("data", data);
+            rates.add(currency);
+            database.put("rates", rates);
+
+            FileWriter writer = new FileWriter(FILE_NAME);
+            writer.write(database.toJSONString());
+            writer.flush();
+            writer.close();
+            return true;
+
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -246,16 +316,18 @@ public class DatabaseManager {
     public ArrayList<String> getPopularCurrencies() {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
             JSONArray popular = (JSONArray) database.get("popular");
 
-            return (ArrayList<String>) popular;
+            ArrayList<String> list = new ArrayList<>();
+            // noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < popular.size(); i++) {
+                list.add(popular.get(i).toString());
+            }
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+            return list;
+
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -269,78 +341,108 @@ public class DatabaseManager {
     public boolean addPopularCurrencies(ArrayList<String> currencies) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(String.valueOf(new FileReader("database.json")));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
             JSONArray popular = new JSONArray();
 
-            for (String curr : currencies) {
-                popular.add(curr);
+            // Checks if currency exists in json, if not, return false;
+            JSONArray rates = (JSONArray) database.get("rates");
+
+            for (String s : currencies) {
+                boolean currencyExists = false;
+
+                if (s.equals("AUD")) {
+                    currencyExists = true;
+                }
+
+                for (int i = 0; i < rates.size(); i++) {
+                    JSONObject rate = (JSONObject) rates.get(i);
+                    if (s.equals(rate.get("rate"))) {
+                        currencyExists = true;
+                    }
+                }
+
+                if (!currencyExists) {
+                    System.out.println(s + " does not exist!");
+                    return false;
+                }
             }
+
+            popular.addAll(currencies);
 
             database.put("popular", popular);
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+            PrintWriter pw = new PrintWriter(FILE_NAME);
+            pw.write(database.toJSONString());
+
+            pw.flush();
+            pw.close();
+
+            return true;
+
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
-        return true;
+
     }
 
-    public boolean conversionIncreased(String fromCurr, String toCurr) {
+    public Boolean conversionIncreased(String fromCurr, String toCurr) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             JSONArray rates = (JSONArray) database.get("rates");
 
-            if (fromCurr == "AUD") {
+            // Checking that currency exists
+            if (!currencyExists(fromCurr, rates) || !currencyExists(toCurr, rates)) {
+                return null;
+            }
+
+            if (fromCurr.equals("AUD")) {
                 JSONObject currObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray currArray = (JSONArray) currObject.get("data");
 
                 // Checking if there is historical data to compare to
                 if (currArray.size() < 2) {
-                    return false;
+                    return null;
+                }
+
+                JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
+                JSONObject currObj2 = (JSONObject) currArray.get(currArray.size() - 2);
+
+                double rate1 = (double) currObj1.get("rate");
+                double rate2 = (double) currObj2.get("rate");
+
+                return (rate1 - rate2) > 0;
+
+            } else if (toCurr.equals("AUD")) {
+                JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
+                JSONArray currArray = (JSONArray) currObject.get("data");
+
+                // Checking if there is historical data to compare to
+                if (currArray.size() < 2) {
+                    return null;
                 }
 
                 JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
                 JSONObject currObj2 = (JSONObject) currArray.get(currArray.size() - 2);
 
                 // Getting inverse of stored as it is database stores the values
-                // for every currency TO AUD
-                float rate1 = 1 / (float) currObj1.get("rate");
-                float rate2 = 1 / (float) currObj2.get("rate");
+                // for every currency FROM AUD
+                double rate1 = 1 / (double) currObj1.get("rate");
+                double rate2 = 1 / (double) currObj2.get("rate");
 
-                return rate1 - rate2 > 0;
-
-            } else if (toCurr == "AUD") {
-                JSONObject currObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
-                JSONArray currArray = (JSONArray) currObject.get("data");
-
-                // Checking if there is historical data to compare to
-                if (currArray.size() < 2) {
-                    return false;
-                }
-
-                JSONObject currObj1 = (JSONObject) currArray.get(currArray.size() - 1);
-                JSONObject currObj2 = (JSONObject) currArray.get(currArray.size() - 2);
-
-                float rate1 = (float) currObj1.get("rate");
-                float rate2 = (float) currObj2.get("rate");
-
-                return rate1 - rate2 > 0;
+                return (rate1 - rate2) > 0;
             } else {
                 // Get rate and check with previous
                 // Get inverse of stored
                 JSONObject toCurrObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
                 JSONArray toCurrArray = (JSONArray) toCurrObject.get("data");
-                JSONObject fromCurrObject = (JSONObject) rates.get(getConversionIndex(toCurr, rates));
+                JSONObject fromCurrObject = (JSONObject) rates.get(getConversionIndex(fromCurr, rates));
                 JSONArray fromCurrArray = (JSONArray) fromCurrObject.get("data");
 
                 // Checking if there is historical data to compare to
                 if (toCurrArray.size() < 2 || fromCurrArray.size() < 2) {
-                    return false;
+                    return null;
                 }
 
                 JSONObject toCurrObj1 = (JSONObject) toCurrArray.get(toCurrArray.size() - 1);
@@ -348,16 +450,12 @@ public class DatabaseManager {
                 JSONObject fromCurrObj1 = (JSONObject) fromCurrArray.get(fromCurrArray.size() - 1);
                 JSONObject fromCurrObj2 = (JSONObject) fromCurrArray.get(fromCurrArray.size() - 2);
 
-                float rate1 = (float) toCurrObj1.get("rate") / (float) fromCurrObj1.get("rate");
-                float rate2 = (float) toCurrObj2.get("rate") / (float) fromCurrObj2.get("rate");
+                double rate1 = (double) toCurrObj1.get("rate") / (double) fromCurrObj1.get("rate");
+                double rate2 = (double) toCurrObj2.get("rate") / (double) fromCurrObj2.get("rate");
 
-                return rate1 - rate2 > 0;
+                return (rate1 - rate2) > 0;
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -366,20 +464,22 @@ public class DatabaseManager {
     public String checkDate(String curr) {
         try {
             JSONParser jsonParser = new JSONParser();
-            JSONObject database = (JSONObject) jsonParser.parse(new FileReader("database.json"));
+            JSONObject database = (JSONObject) jsonParser.parse(new FileReader(FILE_NAME));
 
             JSONArray rates = (JSONArray) database.get("rates");
+
+            // Checking that currency exists
+            if (!currencyExists(curr, rates)) {
+                return null;
+            }
+
             JSONObject currObject = (JSONObject) rates.get(getConversionIndex(curr, rates));
             JSONArray currArray = (JSONArray) currObject.get("data");
             JSONObject currPresentRate = (JSONObject) currArray.get(currArray.size() - 1);
 
             return (String) currPresentRate.get("date");
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -387,7 +487,8 @@ public class DatabaseManager {
     // Helper function to find the index of a rate object in the array
     public static int getConversionIndex(String curr, JSONArray array) {
         for (int i = 0; i < array.size(); i++) {
-            if (curr.equals(array.get(i))) {
+            JSONObject c = (JSONObject) array.get(i);
+            if (curr.equals(c.get("rate").toString())) {
                 return i;
             }
         }
@@ -400,8 +501,8 @@ public class DatabaseManager {
         String[] date1 = d1.split("-");
         String[] date2 = d2.split("-");
 
-        Integer year1 = Integer.parseInt(date1[2]);
-        Integer year2 = Integer.parseInt(date2[2]);
+        int year1 = Integer.parseInt(date1[2]);
+        int year2 = Integer.parseInt(date2[2]);
 
         if (year1 > year2) {
             return false;
@@ -409,43 +510,40 @@ public class DatabaseManager {
             return true;
         } else {
 
-            Integer month1 = Integer.parseInt(date1[1]);
-            Integer month2 = Integer.parseInt(date2[1]);
+            int month1 = Integer.parseInt(date1[1]);
+            int month2 = Integer.parseInt(date2[1]);
 
             if (month1 > month2) {
                 return false;
             } else if (month1 < month2) {
                 return true;
             } else {
-                Integer day1 = Integer.parseInt(date1[0]);
-                Integer day2 = Integer.parseInt(date2[0]);
+                int day1 = Integer.parseInt(date1[0]);
+                int day2 = Integer.parseInt(date2[0]);
 
                 if (day1 > day2) {
                     return false;
-                } else if (day1 < day2) {
+                } else if (day1 <= day2) {
                     return true;
-                } else {
-                    return null;
                 }
             }
         }
+        return null;
     }
 
-    public static Integer dateToInt(String d) {
-        String[] dividedDate = d.split("-");
-        String strDate = dividedDate[2] + dividedDate[1] + dividedDate[0];
-        Integer intDate = Integer.parseInt(strDate);
-        return intDate;
-    }
+    public static Boolean currencyExists(String curr, JSONArray rates) {
+        // Checking that currency exists
+        if (curr.equalsIgnoreCase("AUD")) {
+            return true;
+        } else {
+            int currConvIndex = getConversionIndex(curr, rates);
 
-    public static String dateToString(Integer i) {
-        String date = i.toString();
-        String year = date.substring(0, 4);
-        String month = date.substring(5, 6);
-        String day = date.substring(7, 8);
-
-        date = year + "-" + month + "-" + day;
-        return date;
+            if (currConvIndex == -1) {
+                System.out.println("Currency " + curr + " does not exist!");
+                return false;
+            }
+        }
+        return true;
     }
 
 }

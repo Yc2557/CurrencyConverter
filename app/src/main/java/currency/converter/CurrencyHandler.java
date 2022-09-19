@@ -2,25 +2,25 @@ package currency.converter;
 
 import java.util.List;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.util.Map.Entry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class CurrencyHandler {
-    private CurrencyCalculator currCalc;
-    private DatabaseManager DBM;
+    private final CurrencyCalculator currCalc;
+    private final DatabaseManager DBM;
 
-    public CurrencyHandler(boolean admin) {
+    public CurrencyHandler(boolean admin, String filename) {
         this.currCalc = new CurrencyCalculator();
-        this.DBM = new DatabaseManager(admin);
+        this.DBM = new DatabaseManager(filename);
     }
 
-    public float convertCurrency(float amount, String currCurrency, String newCurrency) {
-        float rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
+    public double convertCurrency(float amount, String currCurrency, String newCurrency) {
+        double rate = DBM.getConversion(currCurrency, newCurrency); // Need to test whether the rate is as expected
 
         return rate * amount;
     }
@@ -36,13 +36,17 @@ public class CurrencyHandler {
                 if (i == j) {
                     display[i][j] = "-";
                 } else {
-                    float conversion = DBM.getConversion(fromCurrency, toCurrency);
-                    boolean upDirection = DBM.conversionIncreased(fromCurrency, toCurrency);
-                    if (upDirection) {
-                        String data = String.format("{0} (↑)", conversion);
+                    double conversion = DBM.getConversion(fromCurrency, toCurrency);
+                    Boolean upDirection = DBM.conversionIncreased(fromCurrency, toCurrency);
+
+                    if (upDirection == null) {
+                        display[i][j] = "-";
+                    }
+                    if (Boolean.TRUE.equals(upDirection)) {
+                        String data = String.format("%.2f (U)", conversion);
                         display[i][j] = data;
                     } else {
-                        String data = String.format("{0} (↓)", conversion);
+                        String data = String.format("%.2f (D)", conversion);
                         display[i][j] = data;
                     }
                 }
@@ -65,21 +69,16 @@ public class CurrencyHandler {
                 add(curr4);
             }
         };
-        if (DBM.addPopularCurrencies(currencies)) {
-            return true;
-        } else {
-            return false;
-        }
+        return DBM.addPopularCurrencies(currencies);
     }
 
-    public Boolean addCurrency(String currency) {
-        this.DBM.add(currency); // add new currency to the json
+    public boolean addCurrency(String currency) {
+        boolean bool = this.DBM.addCurrency(currency); // add new currency to the json
 
-        return Boolean.TRUE;
+        return bool;
     }
 
     public Map<String, Float> collateHistoryResults(Map<String, Float> currency, float amount) {
-
         // get list of rates from map
         List<Float> listOfRates = new ArrayList<>(currency.values());
 
@@ -87,28 +86,62 @@ public class CurrencyHandler {
         return currCalc.calculateStatistic(listOfRates);
     }
 
-    public void updateCurrency(String curr1, String curr2, float newRate, LocalDate date) {
-        LocalDate recentDate = DBM.checkDate(curr1, curr2);
-        if (!recentDate.equals(date)) {
-            // can convert date to a string if needed, left as LocalDate
-            DBM.addRate(curr1, curr2, newRate, "tempDate"); // Made this for testing
+    public boolean updateCurrency(String fromCurr, String toCurr, float newRate, LocalDate date) {
+        if (!fromCurr.equals("AUD") && !toCurr.equals("AUD")) { //one currency must be AUD
+            System.out.println("At least one currency must be AUD!");
+            return false;
         }
+
+        int currNum = 0;
+        String recentDate;
+        if (fromCurr.equals("AUD")) { //
+            currNum = 2;
+            recentDate = DBM.checkDate(toCurr);
+        } else {
+            currNum = 1;
+            recentDate = DBM.checkDate(fromCurr);
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String dateFormatted = date.format(formatter);
+
+        if (!recentDate.equals(date.toString())) {
+            if (currNum == 1) {
+                DBM.addConversion(fromCurr, 1/newRate, dateFormatted);
+            } else {
+                DBM.addConversion(toCurr, newRate, dateFormatted);
+            }
+        }
+
+        return true;
     }
 
-    public void printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
-        HashMap<String, Float> conversionRates = DBM.getConversionHistory(curr1, curr2, startDate, endDate);
+    public boolean printConversionHistory(String curr1, String curr2, LocalDate startDate, LocalDate endDate) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String startDateFormatted = startDate.format(formatter);
+        String endDateFormatted = endDate.format(formatter);
+
+        HashMap<String, Float> conversionRates = DBM.getPastConversion(curr1, curr2, startDateFormatted,
+                endDateFormatted);
+
+        if (conversionRates == null) {
+            return false;
+        }
 
         List<Float> listOfRates = new ArrayList<>(conversionRates.values());
         Map<String, Float> statMap = currCalc.calculateStatistic(listOfRates);
 
-        System.out.println("Conversion Rate History of " + curr1 + " to " + curr2);
+        System.out.println("\nConversion Rate History of " + curr1 + " to " + curr2);
         for (String key : conversionRates.keySet()) {
             System.out.println(key + ": " + conversionRates.get(key));
         }
+        System.out.println("");
 
         System.out.println("Statistics");
         for (String key : statMap.keySet()) {
             System.out.println(key + ": " + statMap.get(key));
         }
+        return true;
     }
 }
