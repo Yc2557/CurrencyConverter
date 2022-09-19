@@ -32,5 +32,6 @@ The program accepts the following commands:
 ## Important Notes
 Some things to note regarding our implementation:
 - By default, our program has the following six currencies; AUD, USD, EUR, SGD, NZD, CNY. AUD is used as the base currency, and thus all conversions are done via AUD.
-- If there is no prior history, the program will show that conversion has increased (as the conversion rate has technically ‘increased’ from 0).
+- If there is no prior history, the program will show that conversion has decreased.
 - If admin user is adding in new conversions, all conversion dates will be set as the current date.
+- If the currency has no data (e.g. a new currency is added during program) the conversion to and from the currency to other currencies is 0.
