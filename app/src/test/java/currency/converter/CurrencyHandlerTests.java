@@ -78,7 +78,7 @@ public class CurrencyHandlerTests {
 
             SGD.put("data", SGD_data);
 
-//            JPY
+//          JPY
             JSONObject JPY = new JSONObject();
             JPY.put("rate", "JPY");
             JSONArray JPY_data = new JSONArray();

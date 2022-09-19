@@ -482,22 +482,6 @@ public class DatabaseManager {
         return null;
     }
 
-    public static Integer dateToInt(String d) {
-        String[] dividedDate = d.split("-");
-        String strDate = dividedDate[2] + dividedDate[1] + dividedDate[0];
-        return Integer.parseInt(strDate);
-    }
-
-    public static String dateToString(Integer i) {
-        String date = i.toString();
-        String year = date.substring(0, 4);
-        String month = date.substring(5, 6);
-        String day = date.substring(7, 8);
-
-        date = year + "-" + month + "-" + day;
-        return date;
-    }
-
     public static Boolean currencyExists(String curr, JSONArray rates) {
         // Checking that currency exists
         if (curr.equalsIgnoreCase("AUD")) {

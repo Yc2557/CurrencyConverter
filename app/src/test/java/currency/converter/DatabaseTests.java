@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -192,4 +193,26 @@ public class DatabaseTests {
         assertEquals(dbm.checkDate("USD"), "10-09-2022");
         assertNull(dbm.checkDate("XRP"));
     }
+
+    @Test
+    void testGetPastConversion() {
+        DatabaseManager dbm = new DatabaseManager("src/test/resources/databaseTest.json");
+
+        ArrayList<String> keys = new ArrayList<>() {
+            {
+                add("01-09-2022");
+                add("10-09-2022");
+            }
+        };
+
+        HashMap<String, Float> result = dbm.getPastConversion("USD", "EUR", "01-09-2022", "10-09-2022");
+
+        ArrayList<String> resultKeys = new ArrayList<>(result.keySet());
+
+        assertEquals(keys, resultKeys);
+        assertEquals(0.99412626f, result.get("01-09-2022"));
+        assertEquals(1.0103397f, result.get("10-09-2022"));
+
+    }
+
 }
