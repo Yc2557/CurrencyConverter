@@ -126,9 +126,18 @@ public class AdminPanelController {
             updateRateResult.setText("Please Select All Currencies.");
             return;
         }
+
+        float run;
+        try {
+            run = Float.parseFloat(updateRateText.getText());
+        } catch (Exception e) {
+            updateRateResult.setFill(Color.RED);
+            updateRateResult.setText("Please Enter Valid Number.");
+            return;
+        }
         boolean result = handler.updateCurrency(fromCurrencyChoice.getSelectionModel().getSelectedItem(),
                 toCurrencyChoice.getSelectionModel().getSelectedItem(),
-                Float.parseFloat(updateRateText.getText()),
+                run,
                 LocalDate.now());
 
         if (!result) {
