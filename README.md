@@ -16,11 +16,11 @@ To run the program, use the following (add code inside square brackets if runnin
 ```
 gradle run [--args=”admin”]
 ```
-To run the GUI use (For Admin Mode input "Admin" in User Mode, else use "User"):
+To run the GUI use:
 ```
 gradle run --args=”gui”
 ```
-
+(For Admin Mode input "Admin" in User Mode, else use "User")
 
 To run test cases on the program, use the following:
 ```
